@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Girl❣️</title> 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {  
+            --blue-soft: #b6d8ff;
+            --blue-bright: #c8e6ff;
+            --text-color: #555;
+            --accent-blue: #7aaaff;  
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            background-color: var(--blue-soft);
+            touch-action: manipulation;
+        }
+
+        /* Latar Belakang Biru Terang (Awal) */
+        body {
+            background: linear-gradient(to bottom, var(--blue-soft), var(--blue-bright));
+        }
+
+        /* Latar Belakang Gelap (Setelah Kado) - Transisi lebih halus */
+        #bg-dark {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            z-index: 2; /* Di atas emoji rain */
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            pointer-events: none;
+        }
+        body.theme-dark #bg-dark {
+            opacity: 1;
+        }
+
+        .emoji-rain {
+            position: fixed;
+            top: -10%;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        #ui-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; display: flex; align-items: center; justify-content: center;
+            pointer-events: none;
+            transition: opacity 0.6s ease-in-out;
+            opacity: 1;
+        }
+
+        .interactive-layer .glass-card, .interactive-layer .btn-group, .interactive-layer button {
+            pointer-events: auto;
+        }
+
+        /* Kotak Konten (Glassmorphism Effect) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 8px 32px 0 rgba(22, 22, 22, 0.2);
+            border: 2px solid rgba(122, 170, 255, 0.4);
+            max-width: 400px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .page {
+            display: none; width: 100%; animation: fadeIn 0.8s ease-in-out;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+
+        .active { display: flex !important; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .sticker-gif { width: 160px; height: auto; margin-bottom: 1px; }
+        .photo-frame { width: 200px; border-radius: 15px; border: 5px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .photo-group { display: flex; gap: 10px; justify-content: center; }
+        .photo-small { width: 130px; }
+
+        /* Kalender Mini */
+        .calendar { background: white; border-radius: 10px; padding: 10px; width: 200px; margin: 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-size: 0.8rem; }
+        .calendar-header { font-weight: bold; color: var(--accent-blue); margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .day { padding: 5px 0; position: relative; z-index: 1; }
+        .today-circle {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 30px; height: 30px; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237aaaff'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            animation: circleScale 0.8s ease-out forwards; animation-delay: 1s; opacity: 0; z-index: -1; 
+        }  
+        @keyframes circleScale { from { transform: translate(-50%, -50%) scale(2); opacity: 0; } to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
+
+        h1 { font-size: 1.3rem; margin: 1px 0; color: #444; }
+        h3 { font-size: 1rem; color: #555; }
+        p { font-size: 0.95rem; margin: 1px 0; line-height: 1.5; font-weight: bold;}
+        
+        button { 
+            background-color: var(--accent-blue); border: none; padding: 12px 30px; border-radius: 25px;
+            color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(95, 95, 95, 0.3);
+            transition: 0.3s; width: 100%; max-width: 250px;
+        }
+        button:hover { transform: scale(1.05); background-color: #a6c8ff; }
+
+        .btn-group { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; margin-top: 20px; }
+        .back-btn { background-color: rgba(122, 170, 255, 0.2); color: var(--text-color); border: 2px solid var(--accent-blue); box-shadow: none; padding: 8px 20px; font-size: 0.85rem; width: auto; min-width: 120px; }
+        .back-btn:hover { background-color: rgba(122, 170, 255, 0.4); }
+        .single-btn { margin-top: 20px; }
+
+        #watermark { position: fixed; bottom: 10px; right: 15px; font-size: 0.7rem; color: rgba(0, 0, 0, 0.3); animation: blink 3s infinite; z-index: 100; text-align: right; }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        #fullscreen-container {
+            width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            position: absolute; top: 0; left: 0; z-index: 10;
+            pointer-events: none;
+        }
+        #fullscreen-container .page { pointer-events: auto; }
+
+        /* Kado */
+        #gift-button { font-size: 100px; background: none; border: none; cursor: pointer; animation: wobble 2s infinite ease-in-out; filter: drop-shadow(0 0 20px rgba(137, 207, 240, 0.4)); padding: 0; margin-top: 20px; box-shadow: none; width: auto; }
+        #gift-button:hover { transform: rotate(5deg) translateY(-20px); background: none; }
+        .title-kado { font-size: clamp(2.5rem, 8vw, 4.5rem); margin-bottom: 2rem; color: white; text-shadow: 0 0 10px #89CFF0; animation: pulse 2s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); text-shadow: 0 0 10px #fff; } to { transform: scale(1.05); text-shadow: 0 0 30px #89CFF0; } }
+        @keyframes wobble { 0%, 100% { transform: rotate(-5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-20px); } }
+
+        /* Galeri 5 Foto */
+        .photo-gallery { position: relative; width: 100%; max-width: 900px; height: 500px; flex-shrink: 0; margin: 0 auto; }
+        .photo-item { position: absolute; width: 160px; padding: 10px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: auto; transition: transform 0.4s, z-index 0.1s, opacity 0.5s, top 0.5s; z-index: 11; opacity: 0; top: 120%; }
+        .photo-item.reveal { opacity: 1; }
+        .photo-item:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 50; }
+        .photo-item img { width: 100%; height: 160px; object-fit: cover; }
+        @media (max-width: 768px) {
+            .photo-gallery { height: 400px; }
+            .photo-item { width: 110px; }
+            .photo-item img { height: 110px; }
+            .photo-1.reveal { top: 5%; left: 8%; transform: rotate(-10deg); }
+            .photo-2.reveal { top: 8%; right: 8%; transform: rotate(8deg); }
+            .photo-3.reveal { top: 35%; left: 5%; transform: rotate(5deg); }
+            .photo-4.reveal { top: 38%; right: 5%; transform: rotate(-10deg); }
+            .photo-5.reveal { top: 65%; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+        } 
+        @media (min-width: 769px) {
+            .photo-1.reveal { top: 10%; left: 15%; transform: rotate(-12deg); }
+            .photo-2.reveal { top: 5%; right: 15%; transform: rotate(8deg); }
+            .photo-3.reveal { top: 40%; left: 20%; transform: rotate(5deg); }
+            .photo-4.reveal { top: 35%; right: 20%; transform: rotate(-8deg); }
+            .photo-5.reveal { top: 60%; left: 50%; transform: translateX(-50%) rotate(2deg); }
+        }
+
+        /* Surat Ketik */
+        .message-card { position: relative; z-index: 60; max-width: 450px; width: 85%; background: rgba(255, 255, 255, 0.12); padding: 30px; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.7); text-align: center; opacity: 0; transform: scale(0.8) translateY(30px); transition: all 0.8s; color: white; margin: 20px auto; }
+        .message-card.reveal { opacity: 1; transform: scale(1) translateY(0); }
+        .message-card h2 { color: #89CFF0; margin-bottom: 15px; font-size: 1.8rem; }
+        .message-card p { font-size: 1.05rem; line-height: 1.6; }
+        #typing-text { white-space: pre-wrap; text-align: left; }
+        #typing-text::after { content: '|'; animation: blink 0.7s infinite; color: #89CFF0; margin-left: 2px; }
+
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 1.5s; pointer-events: none; }
+        #canvas-fireworks { z-index: 3; display: none; opacity: 0; }
+        #canvas-matrix { z-index: 4; display: none; opacity: 0; }
+        
+        #wishes-hint-text { 
+            position: fixed; top: 40px; left: 0; width: 100%; 
+            text-align: center; color: rgba(255,255,255,0.9); 
+            letter-spacing: 2px; font-size: 14px; animation: pulse 1s infinite alternate; 
+            opacity: 0; transition: opacity 1s; text-shadow: 0 0 5px black; z-index: 20;
+        }
+        
+        /* Akhir Final Matrix */
+        #final-link { position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 1.5s; text-align: center; text-decoration: none; display: none; }
+        #final-link img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #89CFF0; box-shadow: 0 0 20px rgba(137, 207, 240, 0.6); transition: transform 0.3s; }
+        #final-link p { color: white; font-size: 14px; margin-top: 10px; text-shadow: 0 0 5px #89CFF0; animation: pulse 1s infinite alternate; }
+        #credit-text { position: fixed; bottom: 20px; right: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.3); z-index: 100; display: none; pointer-events: none; }
+    </style>
+</head>
+<body class="theme-light">
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://birthdaysx.github.io/Musik/shape-of-my-heart.mp3" type="audio/mpeg">
+    </audio> 
+
+    <div id="bg-dark"></div>
+    <div style="font-family: 'Lucida Calligraphy', cursive;" id="watermark">from ur belove<3</div> 
+
+    <canvas id="canvas-fireworks"></canvas>
+    <canvas id="canvas-matrix"></canvas>
+
+    <div id="ui-layer" class="interactive-layer" style="opacity: 0;">
+        
+        <!-- ================= CONTAINER KARTU KACA ================= -->
+        <div class="glass-card" id="glass-card-container">
+            
+            <!-- Seq 1: Opening (2.1) -->
+            <div class="page" id="seq-1"> 
+                <img src="https://media.tenor.com/nSO0F37SSFUAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif">
+                <h1>HAPPY BIRTHDAYY <br> CANTIKKUU SAYANGKUU <br> ૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა </h1> 
+                <p>there's more waiting... click to find out ✨</p> 
+                <button class="single-btn" onclick="nextSeq()">tap <3</button> 
+            </div>
+
+            <!-- Seq 2: Calendar (2.2) -->
+            <div class="page" id="seq-2"> 
+                <div class="calendar"> 
+                    <div class="calendar-header" id="monthLabel">July 2026</div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div> 
+                <p>Kamu sudah lebih baik di setiap tahunyaa. Keren cekaliee sayangkuuu❣️</p>
+                <div class="btn-group"> 
+                    <button onclick="nextSeq()">open it <3</button>
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div> 
+            </div>
+
+            <!-- Seq 3: Text 1 (2.3) -->
+            <div class="page" id="seq-3"> 
+                <img src="https://birthdaysx.github.io/Foto6/b (1).jpeg" class="sticker-gif"> 
+                <p>Makin tambah umur makin cantik aja nii ayangkuuu</p>
+                <div class="btn-group">
+                    <button onclick="nextSeq()"><3</button>  
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Seq 4: Text 2 (2.4) -->
+            <div class="page" id="seq-4">
+                <img src="https://media.tenor.com/vroVodINV0EAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
+                <p>Okeyy ini masih ada lagii, sesuatu buat kamu,Ga baguss si tapi semoga suka❣️.</p> 
+                <p>Di baca pelan pelan aja yaa sayangkuu 🎂</p>
+                <div class="btn-group">
+                    <button onclick="nextSeq()">okayy <3</button> 
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Seq 6: Foto 1 (2.5) -->
+            <div class="page" id="seq-6">
+                <img src="https://birthdaysx.github.io/Foto6/b (2).jpeg" class="photo-frame"> 
+                <h3>Kamuu pantas dapetin semua cinta didunia hari ini dan selamanyaa,<br>happy birthday cintakuuu❣️</h3>
+                <p class="text">tiimaaci sayangg udah jadi bagian terbaikku <3</p>
+                <div class="btn-group">
+                    <button onclick="nextSeq()">open this (♡ ᵔ ᵕ ᵔ ♡)</button> 
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Seq 8: Foto 2 (2.6) -->
+            <div class="page" id="seq-8">
+                <div class="photo-group">
+                    <img src="https://birthdaysx.github.io/Foto6/b (3).jpeg" class="photo-frame photo-small"> 
+                    <img src="https://birthdaysx.github.io/Foto6/b (4).jpeg" class="photo-frame photo-small"> 
+                </div>
+                <h3>Semoga setiap tahunya, sayang semakin pinterdan sukses, semakin baik hati sama semua orangg, dan semakin luar biasa. Happy birthday, my girl❣️🫂</h3>
+                <p class="text">kalau ditanya apa yang paling indah hari ini? jawabanku kamu, sayangkuu.</p>
+                <div class="btn-group"> 
+                    <button onclick="nextSeq()">♡</button>  
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Seq 9: Foto 3 (2.7) -->
+            <div class="page" id="seq-9">
+                <img src="https://birthdaysx.github.io/Foto6/b (5).jpeg" class="photo-frame"> 
+                <h3>akuu slaluu ssayangg ke kamu setiap harinya dan akan bertambah teruss sayangg, aku gaakan pernah bosen ke kamu</h3>
+                <p class="text">it's your day, sayangg. dibaca pelan ajaa, aku punya surat kecil buat bubbieee</p> 
+                <div class="btn-group"> 
+                    <button onclick="nextSeq()">Surat Buat Ayang ♡</button>  
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= CONTAINER FULLSCREEN (Background Gelap) ================= -->
+        <div id="fullscreen-container">
+            
+            <!-- Seq 5: Kado (3.1) -->
+            <div class="page" id="seq-5">
+                <h1 class="title-kado">Happy Birthday!</h1>
+                <button id="gift-button" onclick="nextSeq()" aria-label="Buka Kado">🎁</button>
+                <p style="color: #888; margin-top: 30px; letter-spacing: 1px;">Klik kado untuk kejutan</p>
+            </div>
+
+            <!-- Seq 7: 5 Foto & Surat (3.3) -->
+            <div class="page" id="seq-7">
+                <div class="photo-gallery">
+                    <div class="photo-item photo-1" id="p-1"><img src="https://birthdaysx.github.io/Foto6/b (6).jpeg" alt="Momen 1"></div>
+                    <div class="photo-item photo-2" id="p-2"><img src="https://birthdaysx.github.io/Foto6/b (7).jpeg" alt="Momen 2"></div>
+                    <div class="photo-item photo-3" id="p-3"><img src="https://birthdaysx.github.io/Foto6/b (8).jpeg" alt="Momen 3"></div>
+                    <div class="photo-item photo-4" id="p-4"><img src="https://birthdaysx.github.io/Foto6/b (9).jpeg" alt="Momen 4"></div>
+                    <div class="photo-item photo-5" id="p-5"><img src="https://birthdaysx.github.io/Foto6/b (10).jpeg" alt="Momen 5"></div>
+                </div> 
+                
+                <div class="message-card" id="message-card"> 
+                    <h2>Happy Birthday<br>Sayangku🩵</h2>   
+                    <p id="typing-text"></p> 
+                    <p style="font-style: italic; margin-top: 15px;">From Your Favorite Person</p> 
+                    
+                    <div class="btn-group" id="seq-7-btns" style="opacity: 0; transition: opacity 0.5s; margin-top: 20px;">
+                        <button onclick="nextSeq()">Lanjut ♡</button>
+                        <button onclick="prevSeq()" class="back-btn" style="color: white; border-color: white;">Kembali</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seq 10: Kembang Api UI (3.2) -->
+            <div class="page" id="seq-10"> 
+                <div id="wishes-hint-text">✨ Tap-tap layar untuk Wishes ✨</div>
+                <button id="next-page-btn" onclick="nextSeq()" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); width: auto; font-size: 16px; padding: 15px 30px; background: rgba(255,255,255,0.1); border: 2px solid white; border-radius: 30px; color: white; backdrop-filter: blur(5px); z-index: 50;">Lihat Kejutan Terakhir ✨</button> 
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Link Kejutan Paling Akhir -->
+    <a id="final-link" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank">
+        <img src="https://birthdaysx.github.io/Foto/pp6.jpeg" alt="Klik Gambar Ini">
+        <p>Klik Gambar Ini ✨</p> 
+    </a> 
+    <div id="credit-text">🩵</div>
+
+    <script>
+        let currentSequence = 1;
+        const totalSequences = 11;
+        let isTransitioning = false; 
+
+        // Teks Surat (Persis sesuai permintaan klien)
+        const letterText = "Tepat hari ini 4 july 2026, it's your special day sayang\n\nwish u all the best bubbiee maacii sayang udaa lahir kedunia ini dan jadi pasanganku. selamat bertumbuh jadi versi yang lebih baik setiap harinya, sayangku, cintaku. pajang umur dan sehat selalu ya sayangg, biar kita bisa bareng terus harapan akuu dihari ulang tahun kamu, apapun yang kamu minta, cari, dan harapkan, semoga satu persatu terwujud, hari ini dan seterusnya semoga allah mengabulkan hal-hal baik yang benar-benar diinginkan hati kamu. happy birthday sayangg aku akan selalu ada buat kamu, disetiap proses, disetiap hari, aku selalu sama kamu";
+        let isTypingDone = false;
+
+        const wishes = [["HAPPY BIRTHDAY","KESAYANGANKU"],["SEHAT","SELALU🩵"],"PANJANG UMUR",["DILANCARKAN","REZEKINYA"],["SEMUA WISHLIST","KAMU TERCAPAI"],"BAHAGIA TERUSS",["SELALU SAYANG","AKUU,HIHIHI"]]; 
+        let wishIndex = 0;
+
+        // Emoji Rain Configuration
+        const emojis = ['💖', '🧸', '🎀', '🌸', '✨'];
+        function createEmoji() {
+            if(document.body.classList.contains('theme-dark')) return; // Stop if dark theme
+            const e = document.createElement('div');
+            e.className = 'emoji-rain';
+            e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            e.style.left = Math.random() * 100 + 'vw';
+            e.style.animationDuration = Math.random() * 3 + 2 + 's';
+            e.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 5000);
+        }
+        setInterval(createEmoji, 300);
+
+        // Kalender Generator
+        function generateCalendar() { 
+            const grid = document.getElementById('calendarGrid');  
+            grid.innerHTML = "";
+            const targetDay = 4; // Berdasarkan request: July 4, 2026
+            
+            for(let i = 1; i <= 31; i++) { 
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                dayDiv.innerText = i;
+                if(i === targetDay) {
+                    const circle = document.createElement('div');
+                    circle.className = 'today-circle';
+                    dayDiv.appendChild(circle);
+                    dayDiv.style.fontWeight = 'bold';
+                    dayDiv.style.color = 'white';
+                }
+                grid.appendChild(dayDiv);
+            }
+        }
+        generateCalendar();
+
+        function renderSequence(seq) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            
+            const isGlassCard = [1, 2, 3, 4, 6, 8, 9].includes(seq);
+            const isFullscreen = [5, 7, 10].includes(seq);
+
+            if (isGlassCard) {
+                document.getElementById('glass-card-container').style.display = 'flex';
+                document.getElementById('fullscreen-container').style.display = 'none';
+                document.body.classList.remove('theme-dark');
+                document.getElementById(`seq-${seq}`).classList.add('active');
+            } else if (isFullscreen) {
+                document.getElementById('glass-card-container').style.display = 'none';
+                document.getElementById('fullscreen-container').style.display = 'flex';
+                document.body.classList.add('theme-dark');
+                document.getElementById(`seq-${seq}`).classList.add('active');
+                
+                if (seq === 7) {
+                    document.getElementById('fullscreen-container').style.justifyContent = 'flex-start';
+                    document.getElementById('fullscreen-container').style.paddingTop = '50px';
+                    document.getElementById('fullscreen-container').style.overflowY = 'auto';
+                    document.getElementById('ui-layer').style.pointerEvents = 'auto';
+                    
+                    setTimeout(() => {
+                        for(let i=1; i<=5; i++){
+                            setTimeout(() => document.getElementById(`p-${i}`).classList.add('reveal'), i * 300);
+                        }
+                        setTimeout(() => {
+                            document.getElementById('message-card').classList.add('reveal');
+                            if(!isTypingDone) {
+                                typeWriter(letterText, "typing-text", 40, () => {
+                                    isTypingDone = true;
+                                    document.getElementById('seq-7-btns').style.opacity = '1';
+                                });
+                            } else {
+                                document.getElementById('seq-7-btns').style.opacity = '1';
+                            }
+                        }, 1800);
+                    }, 600);
+                } else {
+                    document.getElementById('fullscreen-container').style.justifyContent = 'center';
+                    document.getElementById('fullscreen-container').style.paddingTop = '0';
+                    document.getElementById('fullscreen-container').style.overflowY = 'hidden';
+                }
+
+                if (seq === 10) {
+                    document.getElementById('ui-layer').style.pointerEvents = 'none'; // Biarkan klik tembus ke kembang api
+                    canvasFw.style.display = 'block';
+                    setTimeout(() => { canvasFw.style.opacity = '1'; }, 50);
+                    runFireworks = true;
+                    fw_cinematicDone = false; 
+                    fw_lasers = []; fw_particles = [];
+                    setTimeout(() => {
+                        fw_lasers.push(new Laser(width / 2, height * 0.25, true));
+                        animateFireworks();
+                    }, 800);
+                }
+            } else if (seq === 11) {
+                document.getElementById('ui-layer').style.display = 'none';
+                canvasFw.style.opacity = '0';
+                setTimeout(() => { runFireworks = false; canvasFw.style.display = 'none'; }, 1500);
+
+                canvasM.style.display = 'block';
+                setTimeout(() => { canvasM.style.opacity = '1'; }, 50);
+                
+                initMatrixCanvas();
+                runMatrix = true;
+                m_state = "SWEEP"; m_sweepProgress = 0; m_rainStarted = false; m_textOpacity = 0;
+                document.getElementById('final-link').style.display = 'block';
+                setTimeout(() => { animateMatrix(); }, 600);
+            }
+        }
+
+        function changeSequence(newSeq) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            document.getElementById('ui-layer').style.opacity = '0';
+
+            if (currentSequence === 7 && newSeq !== 7) {
+                setTimeout(() => {
+                    for(let i=1; i<=5; i++) document.getElementById(`p-${i}`).classList.remove('reveal');
+                    document.getElementById('message-card').classList.remove('reveal');
+                }, 600);
+            }
+
+            setTimeout(() => {
+                currentSequence = newSeq;
+                renderSequence(currentSequence);
+                document.getElementById('ui-layer').style.opacity = '1';
+                setTimeout(() => { isTransitioning = false; }, 600); 
+            }, 600);
+        }
+
+        function nextSeq() {
+            if (isTransitioning) return;
+            if (currentSequence === 1) document.getElementById('bgMusic').play().catch(() => {});
+            if (currentSequence === 9) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#afc5ff', '#a0e4ff', '#ffffff'] });
+            
+            if (currentSequence < totalSequences) changeSequence(currentSequence + 1);
+        }
+
+        function prevSeq() {
+            if (isTransitioning) return;
+            if (currentSequence > 1) changeSequence(currentSequence - 1);
+        }
+
+        function typeWriter(text, elementId, speed, callback) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = ""; 
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if(callback) callback();
+            }
+            type();
+        }
+
+        const canvasFw = document.getElementById('canvas-fireworks');
+        const ctxFw = canvasFw.getContext('2d');
+        const canvasM = document.getElementById('canvas-matrix');
+        const ctxM = canvasM.getContext('2d');
+
+        let width, height;
+        let runFireworks = false, runMatrix = false, m_state = "SWEEP"; 
+
+        function resize() {
+            width = window.innerWidth; height = window.innerHeight;
+            canvasFw.width = width; canvasFw.height = height;
+            canvasM.width = width; canvasM.height = height;
+        }
+        window.addEventListener('resize', resize); 
+        resize();
+
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        // ================= KEMBANG API =================
+        let fw_particles = [], fw_lasers = [], fw_cinematicDone = false;
+        
+        class SharpParticle {
+            constructor(x, y, color, isBig = false, targetX = null, targetY = null) {
+                this.x = x; this.y = y; this.color = color; this.targetX = targetX; this.targetY = targetY;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = isBig ? random(8, 25) : random(2, 6);
+                this.velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
+                this.friction = 0.94; this.gravity = (targetX !== null) ? 0 : 0.025;
+                this.opacity = 1; this.decay = (targetX !== null) ? 0.0001 : (isBig ? random(0.0015, 0.012) : random(0.015, 0.03));
+            }
+            draw() {
+                ctxFw.save(); ctxFw.globalAlpha = this.opacity; ctxFw.beginPath();
+                ctxFw.moveTo(this.x, this.y); ctxFw.lineTo(this.x - (this.velocity.x * 3), this.y - (this.velocity.y * 3));
+                ctxFw.strokeStyle = this.color; ctxFw.lineWidth = 1.5; ctxFw.stroke(); ctxFw.restore();
+            }
+            update() {
+                if(this.targetX !== null) {
+                    this.x += (this.targetX - this.x) * 0.1; this.y += (this.targetY - this.y) * 0.1;
+                    this.velocity.x *= 0.9; this.velocity.y *= 0.9;
+                } else {
+                    this.velocity.x *= this.friction; this.velocity.y *= this.friction; this.velocity.y += this.gravity;
+                    this.x += this.velocity.x; this.y += this.velocity.y;
+                }
+                this.opacity -= this.decay;
+            }
+        }
+
+        class Laser {
+            constructor(targetX, targetY, isCinematic = false) {
+                this.x = width / 2; this.y = height; this.targetX = targetX; this.targetY = targetY; this.isCinematic = isCinematic;
+                const angle = Math.atan2(targetY - this.y, targetX - this.x);
+                this.speed = isCinematic ? 0.01 : 2.5; this.acceleration = isCinematic ? 1.028 : 1.1; 
+                this.velocityUnit = { x: Math.cos(angle), y: Math.sin(angle) };
+                this.hue = isCinematic ? 0 : random(0, 360);
+                this.color = isCinematic ? '#E0FFFF' : `hsl(${this.hue}, 100%, 70%)`;
+            }
+            draw() {
+                ctxFw.save(); ctxFw.beginPath(); ctxFw.moveTo(this.x, this.y);
+                ctxFw.lineTo(this.x - this.velocityUnit.x * this.speed * 4, this.y - this.velocityUnit.y * this.speed * 4);
+                ctxFw.strokeStyle = this.color; ctxFw.lineWidth = this.isCinematic ? 3 : 1; ctxFw.stroke(); ctxFw.restore();
+            }
+            update() {
+                this.speed *= this.acceleration; this.x += this.velocityUnit.x * this.speed; this.y += this.velocityUnit.y * this.speed;
+                if (this.y <= this.targetY) { this.explode(); return false; }
+                return true;
+            } 
+            explode() {
+                if (this.isCinematic) { 
+                    for (let i = 0; i < 280; i++) fw_particles.push(new SharpParticle(this.x, this.y, `#89CFF0`, true));
+                    setTimeout(() => createTextParticles("HAPPY BIRTHDAY", this.x, this.y, "#ffffff"), 1); 
+                    fw_cinematicDone = true;
+                    setTimeout(() => { document.getElementById('wishes-hint-text').style.opacity = '1'; }, 1000);
+                    setTimeout(() => { document.getElementById('next-page-btn').style.display = 'block'; document.getElementById('seq-10').style.pointerEvents = 'auto'; }, 5000);  
+                } else {
+                    for (let i = 0; i < 50; i++) fw_particles.push(new SharpParticle(this.x, this.y, this.color));
+                }
+            }
+        } 
+
+        function createTextParticles(text, centerX, centerY, color) {
+            const tempCanvas = document.createElement('canvas'); const tCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = 600; tempCanvas.height = 200; tCtx.fillStyle = 'red'; 
+            tCtx.font = "bold 50px 'Quicksand', sans-serif"; tCtx.textAlign = 'center'; tCtx.textBaseline = 'middle';
+            if (Array.isArray(text)) { tCtx.fillText(text[0], 300, 60); tCtx.fillText(text[1], 300, 120); } 
+            else tCtx.fillText(text, 300, 100);
+            const data = tCtx.getImageData(0, 0, 600, 200).data;
+            for (let y = 0; y < 200; y += 4) {
+                for (let x = 0; x < 600; x += 4) {
+                    if (data[(y * 600 + x) * 4 + 3] > 128) {
+                        fw_particles.push(new SharpParticle(centerX, centerY, color, true, centerX + (x - 300), centerY + (y - 100)));
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('pointerdown', (e) => {
+            if (runFireworks && fw_cinematicDone && e.target.tagName !== 'BUTTON') {
+                const text = wishes[wishIndex];
+                createTextParticles(text, e.clientX, e.clientY, `hsl(${Math.random() * 360}, 100%, 75%)`);
+                wishIndex = (wishIndex + 1) % wishes.length;
+            }
+        }, { passive: true });
+
+        function animateFireworks() {
+            if (!runFireworks) return;
+            ctxFw.fillStyle = 'rgba(0, 0, 0, 0.2)'; ctxFw.fillRect(0, 0, width, height);
+            fw_lasers = fw_lasers.filter(l => { l.draw(); return l.update(); });
+            fw_particles = fw_particles.filter(p => { p.draw(); p.update(); return p.opacity > 0; });
+            if (fw_cinematicDone && fw_lasers.length === 0) fw_lasers.push(new Laser(random(width * 0.1, width * 0.9), random(height * 0.1, height * 0.4)));
+            requestAnimationFrame(animateFireworks);
+        }
+
+        let m_particles = [], m_rippleParticles = [], m_drops = [], m_speeds = [], m_gridChars = [];
+        const m_fontSize = 14, m_loveLetters = "ILOVEYOU".split(""); 
+        let m_columns, m_rows, m_frames = 0, m_sweepProgress = 0, m_isExploding = false, m_rainStarted = false, m_textOpacity = 0;
+
+        class MatrixParticle {
+            constructor(targetX, targetY, type = "normal") {
+                const cx = width / 2, cy = height / 2;
+                if (type === "ripple") {
+                    this.x = cx + (targetX - cx) * 0.75; this.y = cy + (targetY - cy) * 0.75; this.size = Math.random() * 2 + 2.5; 
+                } else {
+                    this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 2 + 1.0;
+                }
+                this.destX = targetX; this.destY = targetY;
+                this.color = (type === "ripple") ? "137, 207, 240" : "255, 255, 255"; 
+                this.active = true; this.opacity = (type === "ripple") ? 0 : 1.0; this.type = type; 
+                this.progress = 0; this.speed = 0.015 + Math.random() * 0.02; 
+                this.driftX = (Math.random() - 0.5) * 0.4; this.driftY = (Math.random() - 0.5) * 0.4;
+                this.noiseOffset = Math.random() * 2000; this.stayTime = 40; this.vx = 0; this.vy = 0;
+            }
+            update() {
+                if (this.type === "ripple") {
+                    if (this.progress < 1) {
+                        this.progress += this.speed;
+                        const cx = width / 2, cy = height / 2, sx = cx + (this.destX - cx) * 0.75, sy = cy + (this.destY - cy) * 0.75;
+                        this.x = sx + (this.destX - sx) * this.progress; this.y = sy + (this.destY - sy) * this.progress;
+                        this.opacity = Math.min(this.progress * 4, 1);
+                    } else {
+                        this.x = this.destX + Math.sin(m_frames * 0.1 + this.noiseOffset) * 0.8;
+                        this.y = this.destY + Math.cos(m_frames * 0.1 + this.noiseOffset) * 0.8;
+                        this.stayTime--; this.opacity = this.stayTime / 40;
+                        if (this.stayTime <= 0) this.active = false;
+                    }
+                } else if (m_isExploding) {
+                    if (this.vx === 0 && this.vy === 0) {
+                        const angle = Math.random() * Math.PI * 2, force = Math.random() * 15 + 12; 
+                        this.vx = Math.cos(angle) * force; this.vy = Math.sin(angle) * force;
+                    }
+                    this.x += this.vx; this.y += this.vy; this.vx *= 0.985; this.vy *= 0.985;
+                } else if (m_state === "FINISHED" || m_state === "FINAL_HEART") {
+                    if (this.opacity > 0.25) this.opacity -= 0.005;
+                    this.x += this.driftX + Math.sin(m_frames * 0.02 + this.noiseOffset) * 0.15;
+                    this.y += this.driftY + Math.cos(m_frames * 0.02 + this.noiseOffset) * 0.15;
+                    this.vx = 0; this.vy = 0;
+                } else {
+                    this.x += (this.destX - this.x) * 0.07; this.y += (this.destY - this.y) * 0.07;
+                    this.vx = 0; this.vy = 0;
+                }
+            }
+            draw() {
+                if (!this.active || this.opacity <= 0) return;
+                ctxM.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+                if (this.type === "ripple") {
+                    const s=this.size*2.8; ctxM.beginPath(); ctxM.moveTo(this.x, this.y + s/4);
+                    ctxM.bezierCurveTo(this.x, this.y, this.x - s/2, this.y, this.x - s/2, this.y + s/4);
+                    ctxM.bezierCurveTo(this.x - s/2, this.y + s/2, this.x, this.y + s*0.75, this.x, this.y + s);
+                    ctxM.bezierCurveTo(this.x, this.y + s*0.75, this.x + s/2, this.y + s/2, this.x + s/2, this.y + s/4);
+                    ctxM.bezierCurveTo(this.x + s/2, this.y, this.x, this.y, this.x, this.y + s/4); ctxM.fill();
+                } else {
+                    ctxM.beginPath(); ctxM.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctxM.fill();
+                }
+            }
+        }
+
+        function initMatrixCanvas() {
+            m_columns = Math.ceil(width / m_fontSize); m_rows = Math.ceil(height / m_fontSize);
+            m_drops = []; m_speeds = []; m_gridChars = [];
+            for (let i = 0; i < m_columns; i++) {
+                m_drops[i] = -Math.random() * 20; m_speeds[i] = 0.1 + Math.random() * 0.3; m_gridChars[i] = [];
+                for (let j = 0; j < m_rows; j++) m_gridChars[i][j] = m_loveLetters[Math.floor(Math.random() * m_loveLetters.length)];
+            }
+        }
+
+        function getTextPoints(text) {
+            const pts = [], tC = document.createElement('canvas'), tCx = tC.getContext('2d');
+            tC.width = width; tC.height = height;
+            tCx.font = `bold ${isNaN(text) && text.length <= 4 || text.length === 1 ? Math.min(width/2.2, 400) : Math.min(width/4, 180)}px Arial`;
+            tCx.textAlign = 'center'; tCx.textBaseline = 'middle'; tCx.fillStyle = 'white'; tCx.fillText(text, width / 2, height / 2);
+            const data = tCx.getImageData(0, 0, width, height).data;
+            for (let y = 0; y < height; y += 5) for (let x = 0; x < width; x += 5) if (data[(y * width + x) * 4 + 3] > 128) pts.push({ x, y });
+            return pts;
+        }
+
+        function updateParticleTargets(text) {
+            const pts = getTextPoints(text);
+            for (let i = 0; i < Math.max(m_particles.length, pts.length); i++) {
+                if (i < pts.length) {
+                    if (i < m_particles.length) { m_particles[i].destX = pts[i].x; m_particles[i].destY = pts[i].y; m_particles[i].active = true; } 
+                    else m_particles.push(new MatrixParticle(pts[i].x, pts[i].y));
+                } else if (m_particles[i]) m_particles[i].active = false;
+            }
+        }
+
+        async function startParticleSequence() {
+            m_state = "SEQUENCE";
+            for (let text of ["3", "2", "1"]) { updateParticleTargets(text); await new Promise(r => setTimeout(r, 2000)); } 
+            m_isExploding = true; await new Promise(r => setTimeout(r, 2200)); m_isExploding = false;
+            for (let word of ["I", "Hope", "You'll", "Be", "Mine", "Now", "And", "Forever"]) { updateParticleTargets(word); await new Promise(r => setTimeout(r, 2000)); }
+            m_isExploding = true; await new Promise(r => setTimeout(r, 800)); m_isExploding = false;
+            m_state = "FINAL_HEART";
+            document.getElementById('credit-text').style.display = 'block';
+            setTimeout(() => { document.getElementById('final-link').classList.add('show'); document.getElementById('final-link').style.pointerEvents = 'auto'; }, 1500); 
+        }
+
+        let m_rippleTimer = 0;
+        function animateMatrix() {
+            if (!runMatrix) return;
+            ctxM.fillStyle = "rgba(0, 0, 0, 0.25)"; ctxM.fillRect(0, 0, width, height); ctxM.font = m_fontSize + "px monospace";
+            
+            if (m_state === "SWEEP") {
+                m_sweepProgress += 0.45; 
+                if (m_sweepProgress >= m_rows * 0.7) m_rainStarted = true;
+                if (m_sweepProgress >= m_rows + 15) { m_state = "WAITING"; startParticleSequence(); }
+                const currentLimit = Math.floor(m_sweepProgress);
+                for (let i = 0; i < m_columns; i++) {
+                    for (let j = 0; j <= currentLimit && j < m_rows; j++) {
+                        if (currentLimit - j < 15) {
+                            ctxM.fillStyle = `rgba(137, 207, 240, ${(1 - (currentLimit - j)/15) * 0.6})`;
+                            ctxM.fillText(m_gridChars[i][j], i * m_fontSize, j * m_fontSize);
+                        }
+                    }
+                }
+            }
+            
+            if (m_rainStarted) {
+                for (let i = 0; i < m_columns; i++) {
+                    m_drops[i] += m_speeds[i];
+                    if (m_drops[i] > m_rows && Math.random() > 0.985) m_drops[i] = 0;
+                    for (let j = 0; j < 10; j++) {
+                        const r = Math.floor(m_drops[i]) - j;
+                        if (r >= 0 && r < m_rows) {
+                            ctxM.fillStyle = `rgba(137, 207, 240, ${0.2 * (1 - j/10)})`;
+                            ctxM.fillText(m_gridChars[i][r], i * m_fontSize, r * m_fontSize);
+                        }
+                    }
+                }
+            }
+
+            if (m_state !== "SWEEP") m_particles.forEach(p => { p.update(); p.draw(); });
+            
+            if (m_state === "FINAL_HEART") {
+                if (m_rippleTimer++ % 20 === 0) {
+                    const cx = width/2, cy = height/2, sc = Math.min(width, height)/45;
+                    for (let i = 0; i < 150; i++) {
+                        const t = (i / 150) * Math.PI * 2, x = 16 * Math.pow(Math.sin(t), 3), y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                        m_rippleParticles.push(new MatrixParticle(cx + x * sc, cy + y * sc, "ripple"));
+                    }
+                }
+                for (let i = m_rippleParticles.length - 1; i >= 0; i--) {
+                    m_rippleParticles[i].update();
+                    if (!m_rippleParticles[i].active) m_rippleParticles.splice(i, 1); else m_rippleParticles[i].draw();
+                }
+                if (m_textOpacity < 1) m_textOpacity += 0.01;
+                const fs = Math.min(width / 24, 26);
+                ctxM.font = `bold ${fs}px "Comic Sans MS", cursive`; ctxM.textAlign = 'center'; ctxM.textBaseline = 'middle';
+                ctxM.fillStyle = `rgba(255, 255, 255, ${m_textOpacity})`;
+                ctxM.fillText("i'm always proud of you", width / 2, (height / 2) - (fs * 0.75));
+                ctxM.fillText("and i love you🩵", width / 2, (height / 2) + (fs * 0.75));
+            }
+            
+            m_frames++; requestAnimationFrame(animateMatrix);
+        }
+
+        // Mulai Saat Load
+        window.onload = () => { 
+            renderSequence(1); 
+            setTimeout(() => { document.getElementById('ui-layer').style.opacity = '1'; }, 100);
+        };
+    </script>
+</body>
+</html>
