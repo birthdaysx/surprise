@@ -586,8 +586,8 @@
             explode() {
                 if (this.isCinematic) { 
                     for (let i = 0; i < 280; i++) fw_particles.push(new SharpParticle(this.x, this.y, `#89CFF0`, true));
-                    setTimeout(() => createTextParticles("HAPPY BIRTHDAY", this.x, this.y, "#ffffff"), 1); 
-                    fw_cinematicDone = true;
+                    setTimeout(() => createTextParticles(["HAPPY","BIRTHDAY"], this.x, this.y, "#ffffff"), 1); 
+                    fw_cinematicDone = true; 
                     setTimeout(() => { document.getElementById('wishes-hint-text').style.opacity = '1'; }, 1000);
                     setTimeout(() => { document.getElementById('next-page-btn').style.display = 'block'; document.getElementById('seq-10').style.pointerEvents = 'auto'; }, 5000);  
                 } else {
