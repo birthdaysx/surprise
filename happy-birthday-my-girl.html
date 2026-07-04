@@ -142,6 +142,9 @@
             display: none; flex-direction: column; align-items: center; justify-content: center;
             position: absolute; top: 0; left: 0; z-index: 10;
             pointer-events: none;
+            /* Perbaikan untuk iOS Safari Scroll */
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
         }
         #fullscreen-container .page { pointer-events: auto; }
 
@@ -427,9 +430,12 @@
                 document.getElementById(`seq-${seq}`).classList.add('active');
                 
                 if (seq === 10) { // Bagian Surat
-                    document.getElementById('fullscreen-container').style.justifyContent = 'flex-start';
-                    document.getElementById('fullscreen-container').style.paddingTop = '50px';
-                    document.getElementById('fullscreen-container').style.overflowY = 'auto';
+                    let fsCont = document.getElementById('fullscreen-container');
+                    fsCont.style.justifyContent = 'flex-start';
+                    fsCont.style.paddingTop = '50px';
+                    fsCont.style.paddingBottom = '100px'; // Ruang ekstra di bawah untuk scroll mentok (Safari iOS)
+                    fsCont.style.overflowY = 'auto'; // Mengizinkan scroll
+                    fsCont.style.WebkitOverflowScrolling = 'touch'; // Fix penting untuk iOS
                     document.getElementById('ui-layer').style.pointerEvents = 'auto';
                     
                     setTimeout(() => {
@@ -449,9 +455,11 @@
                         }, 1800);
                     }, 600);
                 } else {
-                    document.getElementById('fullscreen-container').style.justifyContent = 'center';
-                    document.getElementById('fullscreen-container').style.paddingTop = '0';
-                    document.getElementById('fullscreen-container').style.overflowY = 'hidden';
+                    let fsCont = document.getElementById('fullscreen-container');
+                    fsCont.style.justifyContent = 'center';
+                    fsCont.style.paddingTop = '0';
+                    fsCont.style.paddingBottom = '0';
+                    fsCont.style.overflowY = 'hidden';
                     document.getElementById('ui-layer').style.pointerEvents = 'none';
                 }
 
