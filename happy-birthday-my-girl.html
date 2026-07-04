@@ -200,13 +200,17 @@
         #final-link img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #89CFF0; box-shadow: 0 0 20px rgba(137, 207, 240, 0.6); transition: transform 0.3s; }
         #final-link p { color: white; font-size: 14px; margin-top: 10px; text-shadow: 0 0 5px #89CFF0; animation: pulse 1s infinite alternate; }
         #credit-text { position: fixed; bottom: 20px; right: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.3); z-index: 100; display: none; pointer-events: none; }
+
+        #final-link.show {
+            opacity: 1;
+        } 
     </style>
 </head>
-<body class="theme-light">
+<body class="theme-dark">
 
     <audio id="bgMusic" loop preload="auto">
         <source src="https://birthdaysx.github.io/Musik/shape-of-my-heart.mp3" type="audio/mpeg">
-    </audio> 
+    </audio>  
 
     <div id="bg-dark"></div>
     <div style="font-family: 'Lucida Calligraphy', cursive;" id="watermark">from ur belove<3</div> 
@@ -217,18 +221,18 @@
     <div id="ui-layer" class="interactive-layer" style="opacity: 0;">
         
         <!-- ================= CONTAINER KARTU KACA ================= -->
-        <div class="glass-card" id="glass-card-container">
+        <div class="glass-card" id="glass-card-container" style="display: none;">
             
-            <!-- Seq 1: Opening (2.1) -->
-            <div class="page" id="seq-1"> 
+            <!-- Seq 3: Opening Bubu Dudu -->
+            <div class="page" id="seq-3"> 
                 <img src="https://media.tenor.com/nSO0F37SSFUAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif">
                 <h1>HAPPY BIRTHDAYY <br> CANTIKKUU SAYANGKUU <br> ૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა </h1> 
                 <p>there's more waiting... click to find out ✨</p> 
                 <button class="single-btn" onclick="nextSeq()">tap <3</button> 
             </div>
 
-            <!-- Seq 2: Calendar (2.2) -->
-            <div class="page" id="seq-2"> 
+            <!-- Seq 4: Calendar -->
+            <div class="page" id="seq-4"> 
                 <div class="calendar"> 
                     <div class="calendar-header" id="monthLabel">July 2026</div>
                     <div class="calendar-grid" id="calendarGrid"></div>
@@ -240,18 +244,18 @@
                 </div> 
             </div>
 
-            <!-- Seq 3: Text 1 (2.3) -->
-            <div class="page" id="seq-3"> 
-                <img src="https://birthdaysx.github.io/Foto6/b (1).jpeg" class="sticker-gif"> 
-                <p>Makin tambah umur makin cantik aja nii ayangkuuu</p>
+            <!-- Seq 5: Text 1 (Makin tambah umur) -->
+            <div class="page" id="seq-5"> 
+                <img src="https://media.tenor.com/Pnxv-9Bp0DUAAAAi/tkthao219-bubududu.gif" class="sticker-gif"> 
+                <p>Makin tambah umur makin cantik aja nii ayangkuuu, nda adil ihh</p>
                 <div class="btn-group">
                     <button onclick="nextSeq()"><3</button>  
-                    <button onclick="prevSeq()" class="back-btn">Kembali</button>
+                    <button onclick="prevSeq()" class="back-btn">Kembali</button> 
                 </div>
             </div>
 
-            <!-- Seq 4: Text 2 (2.4) -->
-            <div class="page" id="seq-4">
+            <!-- Seq 6: Text 2 (Okey ini masih ada lagi) -->
+            <div class="page" id="seq-6">
                 <img src="https://media.tenor.com/vroVodINV0EAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
                 <p>Okeyy ini masih ada lagii, sesuatu buat kamu,Ga baguss si tapi semoga suka❣️.</p> 
                 <p>Di baca pelan pelan aja yaa sayangkuu 🎂</p>
@@ -261,9 +265,9 @@
                 </div>
             </div>
 
-            <!-- Seq 6: Foto 1 (2.5) -->
-            <div class="page" id="seq-6">
-                <img src="https://birthdaysx.github.io/Foto6/b (2).jpeg" class="photo-frame"> 
+            <!-- Seq 7: Foto 1 (Pantas dapetin semua) -->
+            <div class="page" id="seq-7">
+                <img src="https://birthdaysx.github.io/Foto6/b (11).jpeg" class="photo-frame"> 
                 <h3>Kamuu pantas dapetin semua cinta didunia hari ini dan selamanyaa,<br>happy birthday cintakuuu❣️</h3>
                 <p class="text">tiimaaci sayangg udah jadi bagian terbaikku <3</p>
                 <div class="btn-group">
@@ -272,11 +276,11 @@
                 </div>
             </div>
 
-            <!-- Seq 8: Foto 2 (2.6) -->
+            <!-- Seq 8: Foto 2 (2 Foto) -->
             <div class="page" id="seq-8">
                 <div class="photo-group">
-                    <img src="https://birthdaysx.github.io/Foto6/b (3).jpeg" class="photo-frame photo-small"> 
-                    <img src="https://birthdaysx.github.io/Foto6/b (4).jpeg" class="photo-frame photo-small"> 
+                    <img src="https://birthdaysx.github.io/Foto6/b (12).jpeg" class="photo-frame photo-small"> 
+                    <img src="https://birthdaysx.github.io/Foto6/b (13).jpeg" class="photo-frame photo-small"> 
                 </div>
                 <h3>Semoga setiap tahunya, sayang semakin pinterdan sukses, semakin baik hati sama semua orangg, dan semakin luar biasa. Happy birthday, my girl❣️🫂</h3>
                 <p class="text">kalau ditanya apa yang paling indah hari ini? jawabanku kamu, sayangkuu.</p>
@@ -286,9 +290,9 @@
                 </div>
             </div>
 
-            <!-- Seq 9: Foto 3 (2.7) -->
+            <!-- Seq 9: Foto 3 (1 Foto aku selalu sayang) -->
             <div class="page" id="seq-9">
-                <img src="https://birthdaysx.github.io/Foto6/b (5).jpeg" class="photo-frame"> 
+                <img src="https://birthdaysx.github.io/Foto6/b (14).jpeg" class="photo-frame"> 
                 <h3>akuu slaluu ssayangg ke kamu setiap harinya dan akan bertambah teruss sayangg, aku gaakan pernah bosen ke kamu</h3>
                 <p class="text">it's your day, sayangg. dibaca pelan ajaa, aku punya surat kecil buat bubbieee</p> 
                 <div class="btn-group"> 
@@ -302,21 +306,27 @@
         <!-- ================= CONTAINER FULLSCREEN (Background Gelap) ================= -->
         <div id="fullscreen-container">
             
-            <!-- Seq 5: Kado (3.1) -->
-            <div class="page" id="seq-5">
+            <!-- Seq 1: Kado -->
+            <div class="page" id="seq-1">
                 <h1 class="title-kado">Happy Birthday!</h1>
                 <button id="gift-button" onclick="nextSeq()" aria-label="Buka Kado">🎁</button>
                 <p style="color: #888; margin-top: 30px; letter-spacing: 1px;">Klik kado untuk kejutan</p>
             </div>
 
-            <!-- Seq 7: 5 Foto & Surat (3.3) -->
-            <div class="page" id="seq-7">
+            <!-- Seq 2: Kembang Api UI -->
+            <div class="page" id="seq-2"> 
+                <div id="wishes-hint-text">✨ Tap-tap layar untuk Wishes ✨</div>
+                <button id="next-page-btn" onclick="nextSeq()" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); width: auto; font-size: 16px; padding: 15px 30px; background: rgba(255,255,255,0.1); border: 2px solid white; border-radius: 30px; color: white; backdrop-filter: blur(5px); z-index: 50;">Lanjut ✨</button> 
+            </div>
+
+            <!-- Seq 10: 5 Foto & Surat -->
+            <div class="page" id="seq-10">
                 <div class="photo-gallery">
-                    <div class="photo-item photo-1" id="p-1"><img src="https://birthdaysx.github.io/Foto6/b (6).jpeg" alt="Momen 1"></div>
-                    <div class="photo-item photo-2" id="p-2"><img src="https://birthdaysx.github.io/Foto6/b (7).jpeg" alt="Momen 2"></div>
-                    <div class="photo-item photo-3" id="p-3"><img src="https://birthdaysx.github.io/Foto6/b (8).jpeg" alt="Momen 3"></div>
-                    <div class="photo-item photo-4" id="p-4"><img src="https://birthdaysx.github.io/Foto6/b (9).jpeg" alt="Momen 4"></div>
-                    <div class="photo-item photo-5" id="p-5"><img src="https://birthdaysx.github.io/Foto6/b (10).jpeg" alt="Momen 5"></div>
+                    <div class="photo-item photo-1" id="p-1"><img src="https://birthdaysx.github.io/Foto6/b (15).jpeg" alt="Momen 1"></div>
+                    <div class="photo-item photo-2" id="p-2"><img src="https://birthdaysx.github.io/Foto6/b (16).jpeg" alt="Momen 2"></div>
+                    <div class="photo-item photo-3" id="p-3"><img src="https://birthdaysx.github.io/Foto6/b (17).jpeg" alt="Momen 3"></div>
+                    <div class="photo-item photo-4" id="p-4"><img src="https://birthdaysx.github.io/Foto6/b (18).jpeg" alt="Momen 4"></div>
+                    <div class="photo-item photo-5" id="p-5"><img src="https://birthdaysx.github.io/Foto6/b (19).jpeg" alt="Momen 5"></div>
                 </div> 
                 
                 <div class="message-card" id="message-card"> 
@@ -324,25 +334,20 @@
                     <p id="typing-text"></p> 
                     <p style="font-style: italic; margin-top: 15px;">From Your Favorite Person</p> 
                     
-                    <div class="btn-group" id="seq-7-btns" style="opacity: 0; transition: opacity 0.5s; margin-top: 20px;">
-                        <button onclick="nextSeq()">Lanjut ♡</button>
+                    <div class="btn-group" id="seq-10-btns" style="opacity: 0; transition: opacity 0.5s; margin-top: 20px;">
+                        <button onclick="nextSeq()">Lihat Kejutan Terakhir ✨</button>
                         <button onclick="prevSeq()" class="back-btn" style="color: white; border-color: white;">Kembali</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Seq 10: Kembang Api UI (3.2) -->
-            <div class="page" id="seq-10"> 
-                <div id="wishes-hint-text">✨ Tap-tap layar untuk Wishes ✨</div>
-                <button id="next-page-btn" onclick="nextSeq()" style="display: none; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); width: auto; font-size: 16px; padding: 15px 30px; background: rgba(255,255,255,0.1); border: 2px solid white; border-radius: 30px; color: white; backdrop-filter: blur(5px); z-index: 50;">Lihat Kejutan Terakhir ✨</button> 
             </div>
 
         </div>
     </div>
 
     <!-- Link Kejutan Paling Akhir -->
-    <a id="final-link" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank">
-        <img src="https://birthdaysx.github.io/Foto/pp6.jpeg" alt="Klik Gambar Ini">
+    <a id="final-link" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank" title="Klik untuk menuju link">
+        <!-- Ganti src dengan link gambar yang kamu inginkan -->
+        <img src="https://birthdaysx.github.io/Foto6/b (10).jpeg" alt="Klik Gambar Ini"> 
         <p>Klik Gambar Ini ✨</p> 
     </a> 
     <div id="credit-text">🩵</div>
@@ -400,21 +405,28 @@
             // Hide all pages
             document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
             
-            const isGlassCard = [1, 2, 3, 4, 6, 8, 9].includes(seq);
-            const isFullscreen = [5, 7, 10].includes(seq);
+            const isGlassCard = [3, 4, 5, 6, 7, 8, 9].includes(seq);
+            const isFullscreen = [1, 2, 10].includes(seq);
 
             if (isGlassCard) {
                 document.getElementById('glass-card-container').style.display = 'flex';
                 document.getElementById('fullscreen-container').style.display = 'none';
                 document.body.classList.remove('theme-dark');
+                document.getElementById('ui-layer').style.pointerEvents = 'none'; // reset to none for glass cards
                 document.getElementById(`seq-${seq}`).classList.add('active');
+                
+                // Matikan animasi kembang api jika transisi ke kartu
+                if (runFireworks) {
+                    canvasFw.style.opacity = '0';
+                    setTimeout(() => { runFireworks = false; canvasFw.style.display = 'none'; }, 1000);
+                }
             } else if (isFullscreen) {
                 document.getElementById('glass-card-container').style.display = 'none';
                 document.getElementById('fullscreen-container').style.display = 'flex';
                 document.body.classList.add('theme-dark');
                 document.getElementById(`seq-${seq}`).classList.add('active');
                 
-                if (seq === 7) {
+                if (seq === 10) { // Bagian Surat
                     document.getElementById('fullscreen-container').style.justifyContent = 'flex-start';
                     document.getElementById('fullscreen-container').style.paddingTop = '50px';
                     document.getElementById('fullscreen-container').style.overflowY = 'auto';
@@ -429,10 +441,10 @@
                             if(!isTypingDone) {
                                 typeWriter(letterText, "typing-text", 40, () => {
                                     isTypingDone = true;
-                                    document.getElementById('seq-7-btns').style.opacity = '1';
+                                    document.getElementById('seq-10-btns').style.opacity = '1';
                                 });
                             } else {
-                                document.getElementById('seq-7-btns').style.opacity = '1';
+                                document.getElementById('seq-10-btns').style.opacity = '1';
                             }
                         }, 1800);
                     }, 600);
@@ -440,10 +452,10 @@
                     document.getElementById('fullscreen-container').style.justifyContent = 'center';
                     document.getElementById('fullscreen-container').style.paddingTop = '0';
                     document.getElementById('fullscreen-container').style.overflowY = 'hidden';
+                    document.getElementById('ui-layer').style.pointerEvents = 'none';
                 }
 
-                if (seq === 10) {
-                    document.getElementById('ui-layer').style.pointerEvents = 'none'; // Biarkan klik tembus ke kembang api
+                if (seq === 2) { // Bagian Kembang Api
                     canvasFw.style.display = 'block';
                     setTimeout(() => { canvasFw.style.opacity = '1'; }, 50);
                     runFireworks = true;
@@ -454,10 +466,12 @@
                         animateFireworks();
                     }, 800);
                 }
-            } else if (seq === 11) {
+            } else if (seq === 11) { // Bagian Matrix
                 document.getElementById('ui-layer').style.display = 'none';
-                canvasFw.style.opacity = '0';
-                setTimeout(() => { runFireworks = false; canvasFw.style.display = 'none'; }, 1500);
+                if(runFireworks) {
+                    canvasFw.style.opacity = '0';
+                    setTimeout(() => { runFireworks = false; canvasFw.style.display = 'none'; }, 1500);
+                }
 
                 canvasM.style.display = 'block';
                 setTimeout(() => { canvasM.style.opacity = '1'; }, 50);
@@ -475,7 +489,7 @@
             isTransitioning = true;
             document.getElementById('ui-layer').style.opacity = '0';
 
-            if (currentSequence === 7 && newSeq !== 7) {
+            if (currentSequence === 10 && newSeq !== 10) {
                 setTimeout(() => {
                     for(let i=1; i<=5; i++) document.getElementById(`p-${i}`).classList.remove('reveal');
                     document.getElementById('message-card').classList.remove('reveal');
@@ -589,7 +603,7 @@
                     setTimeout(() => createTextParticles(["HAPPY","BIRTHDAY"], this.x, this.y, "#ffffff"), 1); 
                     fw_cinematicDone = true; 
                     setTimeout(() => { document.getElementById('wishes-hint-text').style.opacity = '1'; }, 1000);
-                    setTimeout(() => { document.getElementById('next-page-btn').style.display = 'block'; document.getElementById('seq-10').style.pointerEvents = 'auto'; }, 5000);  
+                    setTimeout(() => { document.getElementById('next-page-btn').style.display = 'block'; document.getElementById('seq-2').style.pointerEvents = 'auto'; }, 5000);  
                 } else {
                     for (let i = 0; i < 50; i++) fw_particles.push(new SharpParticle(this.x, this.y, this.color));
                 }
