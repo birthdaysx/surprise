@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Adelia!</title>   
+    <style>
+        :root {  
+            --blue-soft: #b6d8ff;
+            --blue-bright: #c8e6ff;
+            --text-color: #555;
+            --accent-blue: #7aaaff;  
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom, #b6d8ff, #c8e6ff);
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* Hujan Emoticon */
+        .emoji-rain {
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Container Utama */
+        #content-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Kotak Konten (Glassmorphism Effect) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 8px 32px 0 rgba(22, 22, 22, 0.2);
+            border: 2px solid rgba(122, 170, 255, 0.4);
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Media */
+        .sticker-gif {
+            width: 140px;
+            height: auto; 
+            margin-bottom: 5px;
+            margin-top: 10px;
+        }
+
+        .photo-frame {
+            width: 200px;
+            border-radius: 15px;
+            border: 5px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .photo-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .photo-small {
+            width: 130px;
+        }
+
+        /* Kalender Mini */
+        .calendar {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            width: 200px;
+            margin: 15px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 0.8rem;
+        }
+        .calendar-header {
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .days-header {
+            font-size: 0.75rem;
+            color: #888;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        .day {
+            padding: 5px 0;
+            position: relative;
+            z-index: 1; 
+        }
+        .today-circle {
+            position: absolute;
+            top: 55%;   
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px; 
+            height: 30px; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237aaaff'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: circleScale 0.8s ease-out forwards; 
+            animation-delay: 1s;
+            opacity: 0;
+            z-index: -1; 
+        }  
+        @keyframes circleScale {
+            from { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        /* Tulisan */
+        h1 { font-size: 1.3rem; margin: 1px 0; color: #444; }
+        h3 { font-size: 1rem; color: #555; margin-top: 10px;}
+        p { font-size: 0.95rem; margin: 5px 0; line-height: 1.5; font-weight: bold;}
+        .text-small { font-size: 0.85rem; font-weight: normal; margin-top: 10px; }
+        
+        /* Tombol & Layout Tombol */
+        button { 
+            background-color: var(--accent-blue);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(95, 95, 95, 0.3);
+            transition: 0.3s;
+            width: 100%; 
+            max-width: 250px; 
+        }
+        button:hover { transform: scale(1.05); background-color: #a6c8ff; }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px; 
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Style Khusus Tombol Kembali */
+        .back-btn {
+            background-color: rgba(122, 170, 255, 0.2);
+            color: var(--text-color);
+            border: 2px solid var(--accent-blue);
+            box-shadow: none;
+            padding: 8px 20px; 
+            font-size: 0.85rem;
+            width: auto; 
+            min-width: 120px;
+        }
+        .back-btn:hover {
+            background-color: rgba(122, 170, 255, 0.4);
+        }
+
+        .single-btn { margin-top: 20px; }
+
+        /* Watermark */
+        #watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.7rem;
+            color: rgba(0, 0, 0, 0.3);
+            animation: blink 3s infinite;
+            z-index: 100;
+            text-align: right;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Typewriter Page */
+        #typewriter {
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            text-align: left;
+            max-width: 100%;
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://birthdaysx.github.io/Musik/hbd-pianoo.mp3" type="audio/mpeg">
+    </audio> 
+ 
+    <div style="font-family: 'Lucida Calligraphy', cursive;" id="watermark">from your boyfriend <3</div>
+
+    <div id="content-container"> 
+        <div class="glass-card"> 
+             
+            <!-- Halaman 1 -->
+            <div class="page active" id="p1"> 
+                <img src="https://media.tenor.com/nSO0F37SSFUAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif"> 
+                <h1>HAPPY BIRTHDAYY <br> CANTIKUU SAYANGKUU <br> ૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა </h1> 
+                <p>there's more waiting... click to find out ✨</p> 
+                <button class="single-btn" onclick="nextPage(1)">tap <3</button> 
+            </div>
+
+            <!-- Halaman 2 -->
+            <div class="page" id="p2"> 
+                <div class="calendar"> 
+                    <div class="calendar-header" id="monthLabel">Juli 2026</div>
+                    <div class="calendar-grid days-header">
+                        <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Grid generated by JS -->
+                    </div>
+                </div> 
+                <p>cieeee yang ulang tahun gk berasa dah masuk kepala 2 niiih makin tua aja 😆</p>
+                <p class="text-small">kukira kita bakal menua bersama wkwk</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(2)">open it <3</button>
+                    <button onclick="prevPage(2)" class="back-btn">Kembali</button>
+                </div> 
+            </div>
+
+            <!-- Halaman 3 -->
+            <div class="page" id="p3"> 
+                <img src="https://birthdaysx.github.io/Foto6/d0.jpeg" class="sticker-gif">
+                <p>Oyaa kmu makin hari makin cantik yaa, kamu jga cukup keren buat aku dan baik.</p>
+                <p class="text-small">tapi jangan lupa baik sama diri sendiri ya. You were a wonderful experience and i love you so much.</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(3)"><3</button>  
+                    <button onclick="prevPage(3)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Halaman 4 -->
+            <div class="page" id="p4">
+                <img src="https://media.tenor.com/vroVodINV0EAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
+                <p>Kalo dipikir-pikir ya kita agak mirip juga, aku ngerasa gitu sih.</p> 
+                <p>kmu jga gk? 🤭</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(4)">iya mirip <3</button> 
+                    <button onclick="prevPage(4)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Halaman 5 (Tempat Foto 1) -->
+            <div class="page" id="p5">
+                <!-- Ganti link di src ini dengan link foto asli yang dikirim klien -->
+                <img src="https://birthdaysx.github.io/Foto6/d1.jpeg" class="photo-frame"> 
+                <p>Bahagia selalu ya bubbb kamu pantas bahagia, gk boleh sedih pokoknya.</p>
+                <p class="text-small">Jangan pernah berfikir mati duluan yaa <3</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(5)">open this (♡ ᵔ ᵕ ᵔ ♡)</button> 
+                    <button onclick="prevPage(5)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Halaman 6 (Tempat Foto 2) -->
+            <div class="page" id="p6">
+                <div class="photo-group">
+                    <!-- Ganti link di src ini dengan link foto asli yang dikirim klien -->
+                    <img src="https://birthdaysx.github.io/Foto6/d2.jpeg" class="photo-frame photo-small"> 
+                    <img src="https://birthdaysx.github.io/Foto6/d3.jpeg" class="photo-frame photo-small"> 
+                </div>
+                <p class="text-small" style="font-weight: bold;">Boleh gk sih aku nyampein harapanku jga? Boleh lah wkwk.</p>
+                <p class="text-small">paling aku harapanku dihubungan yang rumit ini dan sulitnya memahami satu sama lain kita gk pernah menyerah aku percaya di jalan yang panjang 2, 5 atau 10 tahun kedepan kita nikmatin sama sama dan kita jadi kepribadian yang lebih baik.</p>
+                <div class="btn-group"> 
+                    <button onclick="nextPage(6)">♡</button>  
+                    <button onclick="prevPage(6)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <!-- Halaman 7 -->
+            <div class="page" id="p7">  
+                <img src="https://birthdaysx.github.io/Foto6/d4.jpeg" class="sticker-gif"> 
+                <p>Dan aku pengen kamu jadi orang yang pertama aku ajak masuk ke dunia yang aku bangun...</p>
+                <p class="text-small" style="font-weight: bold; font-size: 1rem;">stay with me okey?</p> 
+                <div class="btn-group"> 
+                    <button onclick="nextPage(7)">okeyy ♡</button>  
+                    <button onclick="prevPage(7)" class="back-btn">Kembali</button> 
+                </div>
+            </div> 
+ 
+            <!-- Halaman 8 -->
+            <div class="page" id="p8">
+                <img src="https://birthdaysx.github.io/Foto6/d6.jpeg" class="sticker-gif"> 
+                <p>Last nihh ngomong apa yaaaa di next aja deh.</p>
+                <p class="text-small" style="font-weight: bold;">baca pelan pelan lo yaaa jangan ada yang diskip, aku nak yapping 📝</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(8)">siapp <3</button> 
+                    <button onclick="prevPage(8)" class="back-btn">Kembali</button> 
+                </div>
+            </div>
+
+            <!-- Halaman 9 (Typewriter) -->
+            <div class="page" id="p9">
+                <img src="https://media.tenor.com/6yBqtjeP1ekAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif" style="width: 100px;"> 
+                <h1 style="font-size: 1.1rem; color: var(--accent-blue);">HAPPYY BIRTHDAYY<br>ADELIA DOMINIC<br>૮₍´˶> . < ⑅ ₎ა</h1> 
+                <div id="typewriter"></div>   
+                
+                <div class="btn-group" id="p9-buttons" style="display: none; animation: fadeIn 1s;">
+                    <button id="waButton" onclick="balasWA()">Balas pesan ini 🥰</button>
+                    <button onclick="prevPage(9)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Emoticon Hujan
+        const emojis = ['💖', '🧸', '🎀', '🌸', '✨'];
+        
+        function createEmoji() {
+            const e = document.createElement('div');
+            e.className = 'emoji-rain';
+            e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            e.style.left = Math.random() * 100 + 'vw';
+            e.style.animationDuration = Math.random() * 3 + 2 + 's';
+            e.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 5000);
+        }
+        setInterval(createEmoji, 300);
+
+        // Generate Calendar - 11 Juli 2026
+        function generateCalendar() { 
+            const year = 2026;
+            const month = 6; // Juli (Index bulan ke-6, dimulai dari 0)
+            document.getElementById('monthLabel').innerText = "Juli 2026";  
+            
+            const grid = document.getElementById('calendarGrid');  
+            const targetDay = 11; // Tanggal klien (11 July)
+            
+            // Cek hari pertama bulan ini (0 = Minggu, 1 = Senin, dst)
+            const firstDay = new Date(year, month, 1).getDay();
+            // Cek jumlah hari bulan ini
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Buat slot kosong untuk menyamakan awal tanggal dengan hari di dunia nyata
+            for(let i = 0; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'day';
+                grid.appendChild(emptyDiv);
+            }
+            
+            // Generate kalender
+            for(let i = 1; i <= daysInMonth; i++) { 
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                dayDiv.innerText = i;
+                if(i === targetDay) {
+                    const circle = document.createElement('div');
+                    circle.className = 'today-circle';
+                    dayDiv.appendChild(circle);
+                    dayDiv.style.fontWeight = 'bold';
+                    dayDiv.style.color = 'white';
+                }
+                grid.appendChild(dayDiv);
+            }
+        }
+        generateCalendar();
+
+        // Navigasi Halaman Maju
+        function nextPage(current) {
+            if(current === 1) {
+                document.getElementById('bgMusic').play().catch(() => {});
+            }
+            if(current === 8) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#afc5ff', '#a0e4ff', '#6b9dff', '#ffffff'] 
+                });
+            }
+
+            document.getElementById('p' + current).classList.remove('active');
+            const next = current + 1;
+            document.getElementById('p' + next).classList.add('active');
+
+            if(next === 9) {
+                startTypewriter();
+            }
+        } 
+
+        // Navigasi Halaman Mundur (Kembali)
+        function prevPage(current) {
+            document.getElementById('p' + current).classList.remove('active');
+            const prev = current - 1;
+            document.getElementById('p' + prev).classList.add('active');
+        }
+ 
+        // Efek Mengetik dari Request Klien
+        const text = `Hallooo it's your boyfriend dan kita sampe ke bagian akhir dari yappingkuu. Aku harus ngomong apa lagi yaa, paling aku banyak banyak minta maaf sih krna banyak salah buat kamu, kita banyak ributnya ya, kalo dichat jarang komunikasi juga sih dichat eh boleh gk sih aku ngomong disini? 😅
+
+Tetep semangatt yaa cantikuu sayangkuuu semoga apa yang kamu impikan tercapai. Aminn...
+
+Udh ah cukup aku lupa klo ini ulang tahun muu sekian yappingkuu sekali lgi...
+
+Happy birthday Adelia Dominic 🎉🎂`; 
+
+        function startTypewriter() {
+            let i = 0;
+            const target = document.getElementById("typewriter");
+            target.innerHTML = ""; 
+            document.getElementById("p9-buttons").style.display = "none"; 
+            
+            function type() {
+                if (i < text.length) { 
+                    target.innerHTML += text.charAt(i);
+                    i++;
+                    target.scrollTop = target.scrollHeight; 
+                    setTimeout(type, 50); // Kecepatan
+                } else {
+                    target.innerHTML += "<br><br><strong>Love you so much, cantikuu ❤️</strong>";    
+                    target.scrollTop = target.scrollHeight; 
+                    
+                    const p9Btns = document.getElementById("p9-buttons");
+                    p9Btns.style.display = "flex";
+                }
+            } 
+            type();
+        } 
+
+        // Fungsi Redirect ke WhatsApp klien
+        function balasWA() {
+            const phoneNumber = "6289673381317"; // Sudah diganti ke nomor klien
+            const message = "Makasih sayang ucapan dan yapping-nya, lucu banget ihh 🥺🤍";  
+            const encodedMessage = encodeURIComponent(message);
+            
+            window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+        }
+    </script>
+</body>
+</html>
