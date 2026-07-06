@@ -95,7 +95,7 @@
         .cassette {
             width: 100%;
             height: 100%;
-            background: #422006; /* Dark brown/yellowish for cassette */
+            background: #422006; 
             border-radius: 12px;
             position: relative;
             cursor: pointer;
@@ -438,7 +438,14 @@
 
     <!-- PAGE 4: SONGS -->
     <div id="page4" class="page-container hidden-page">
-        <h2 class="font-big text-2xl mb-6">Songs for our memories</h2>
+        <h2 class="font-big text-2xl mb-3">Songs for our memories</h2>
+        
+        <!-- Tombol untuk memutar lagu utama kembali -->
+        <div class="flex justify-center w-full mb-3">
+            <button onclick="playMainSong()" class="bg-white/90 backdrop-blur-sm border-2 border-yellow-400 text-yellow-700 px-5 py-1.5 rounded-full font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all flex items-center gap-2 z-10">
+                <span>🔄 Putar Lagu Utama</span>
+            </button>
+        </div>
         
         <div id="cassette-list" class="w-full max-w-xs mb-8 h-[55vh] overflow-y-auto px-4 pt-4">
             
@@ -500,21 +507,21 @@
         <h2 class="font-big text-3xl mb-4">Our Memories</h2>
         <div class="photo-grid mb-6">
             <!-- Link foto dibiarkan menggunakan Github asli sesuai request -->
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e1.jpeg" alt="Memory 1"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e2.jpeg" alt="Memory 2"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e3.jpeg" alt="Memory 3"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e4.jpeg" alt="Memory 4"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e5.jpeg" alt="Memory 5"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e6.jpeg" alt="Memory 6"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e7.jpeg" alt="Memory 7"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e8.jpeg" alt="Memory 8"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e9.jpeg" alt="Memory 9"></div>
-            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e10.jpeg" alt="Memory 10"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (1).jpeg" alt="Memory 1"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (2).jpeg" alt="Memory 2"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (3).jpeg" alt="Memory 3"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (4).jpeg" alt="Memory 4"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (5).jpeg" alt="Memory 5"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (6).jpeg" alt="Memory 6"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (7).jpeg" alt="Memory 7"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (8).jpeg" alt="Memory 8"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (9).jpeg" alt="Memory 9"></div>
+            <div class="photo-card" onclick="this.style.transform='scale(1.05) rotate(-1deg)'; setTimeout(()=>this.style.transform='', 400)"><img src="https://birthdaysx.github.io/Foto6/e (10).jpeg" alt="Memory 10"></div>
         </div>
         <p class="italic text-xs text-yellow-600 mb-4 px-10">"Scroll down to see all our moments."</p>
         <div class="flex space-x-4">
             <button onclick="nextPage(4)" class="bg-white text-yellow-500 border-2 border-yellow-500 px-8 py-3 rounded-full font-bold shadow-lg">Back</button> 
-            <button onclick="nextPage(6)" class="bg-yellow-500 text-white px-10 py-3 rounded-full font-bold shadow-lg">Continue ✨</button>
+            <button onclick="nextPage(6)" class="bg-yellow-500 text-white px-10 py-3 rounded-full font-bold shadow-lg">Continue ✨</button> 
         </div>
     </div>
 
@@ -662,6 +669,9 @@
         // Lagu utama yang diputar otomatis: Menua Bersama
         const defaultSong = 'https://birthdaysx.github.io/Musik/hingga-tua-bersama.mp3'; 
  
+        let typeTimeoutP3; // Untuk mencegah bentrok animasi ngetik di page 3
+        let typeTimeoutP7; // Untuk mencegah bentrok animasi ngetik di page 7
+
         function initExperience() {
             document.getElementById('page0').classList.add('hidden-page');
             const p1 = document.getElementById('page1'); p1.classList.remove('hidden-page'); p1.classList.add('fade-in-page');
@@ -689,6 +699,13 @@
             audio.play();
         }
 
+        // Fungsi baru untuk memutar Lagu Utama
+        function playMainSong() {
+            document.querySelectorAll('.cassette').forEach(c => c.classList.remove('playing'));
+            audio.src = defaultSong;
+            audio.play();
+        }
+
         function nextPage(n) {
             document.querySelectorAll('.page-container').forEach(p => {
                 p.classList.add('hidden-page');
@@ -713,6 +730,8 @@
             // Ucapan dari request
             const txt = "Selamat ulang tahun sayang semogaa panjang umur sehat selalu terus makin cantik tunggu aku cuti yaaa sayang kitaaa jalan\" keliling kotaa semangat terus yaa sayang jalani hari\" nyaa ada aku di sini yang selalu temenin kamu Love you sayang aku 🫶🏻";
             const target = document.getElementById('type-p3');
+            
+            if (typeTimeoutP3) clearTimeout(typeTimeoutP3);
             target.innerHTML = ""; 
             let i = 0;
             
@@ -720,18 +739,20 @@
                 if (i < txt.length) {
                     target.innerHTML += txt.charAt(i);
                     i++;
-                    setTimeout(type, 45);
+                    typeTimeoutP3 = setTimeout(type, 45);
                 } else {
                     document.getElementById('btn-p3').classList.remove('hidden');
                 }
             }
-            setTimeout(type, 500);
+            typeTimeoutP3 = setTimeout(type, 500);
         }
 
         function startTypewriterP7() {
             // Surat cinta final dari request
             const txt = "Makasih yaaa sayang selalu ada buat aku selalu maafin aku dikala aku punyaa salah dan aku sangat berterimakasih buat kamu nemenin aku dari aku masih sipil sampek aku bisa jadi abdi negaraa makasih yaaa sayang aku sayang banget sama kamu sehat selalu yaaa cintanyaa aku 🫶🏻";
             const target = document.getElementById('type-p7');
+            
+            if (typeTimeoutP7) clearTimeout(typeTimeoutP7); // Hentikan ketikan sebelumnya jika ada
             target.innerHTML = ""; 
             let i = 0;
             
@@ -740,10 +761,10 @@
                     target.innerHTML += txt.charAt(i);
                     i++;
                     target.parentElement.scrollTop = target.parentElement.scrollHeight;
-                    setTimeout(type, 40);
+                    typeTimeoutP7 = setTimeout(type, 40);
                 }
             }
-            setTimeout(type, 800);
+            typeTimeoutP7 = setTimeout(type, 800);
         }
 
         function sealIt() {
