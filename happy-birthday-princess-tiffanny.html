@@ -21,9 +21,7 @@
             transition: background-color 1s ease;
         }
 
-        /* ============================
-           TRANSITION CURTAIN (LAVENDER THEME)
-           ============================ */
+        /* TRANSITION CURTAIN (LAVENDER THEME) */
         #transition-curtain {
             position: fixed;
             top: 0;
@@ -55,9 +53,7 @@
             100% { transform: scale(1); }
         }
 
-        /* ============================
-           STYLE INDEX 1 (MATRIX - LAVENDER THEME)
-           ============================ */
+        /* STYLE INDEX 1 (MATRIX - LAVENDER THEME) */
         #section-index1 {
             position: absolute;
             top: 0;
@@ -86,7 +82,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #2e1065 0%, #000000 100%); /* Deep purple gradient */
+            background: radial-gradient(circle, #2e1065 0%, #000000 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -98,7 +94,7 @@
         #mStartBtn {
             padding: 20px 50px;
             font-size: 24px;
-            background: #a855f7; /* purple-500 */
+            background: #a855f7;
             color: #ffffff; 
             border: none;
             cursor: pointer;
@@ -122,12 +118,12 @@
         }
 
         #mStartBtn:hover {
-            background: #9333ea; /* purple-600 */
+            background: #9333ea;
             transform: translateY(-5px) scale(1.1);
         }
 
         .mHint {
-            color: #e9d5ff; /* purple-200 */
+            color: #e9d5ff;
             margin-top: 20px;
             font-size: 14px;
             font-weight: bold;
@@ -173,9 +169,7 @@
             animation: none; 
         }
 
-        /* ============================
-           STYLE INDEX 2 (BIRTHDAY - LAVENDER THEME)
-           ============================ */
+        /* STYLE INDEX 2 (BIRTHDAY - LAVENDER THEME) */
         #section-index2 {
             position: absolute;
             top: 0;
@@ -185,7 +179,7 @@
             display: none; 
             z-index: 500;
              
-            /* Updated Color Palette: Lavender Dream */
+            /* Lavender Dream Palette */
             --bg-color: #e9d5ff; /* purple-200 */
             --accent-light: #faf5ff; /* purple-50 */
             --accent-main: #a855f7; /* purple-500 */
@@ -246,7 +240,7 @@
             backdrop-filter: blur(8px);
             padding: 2.5rem;
             border-radius: 2rem;
-            border: 4px solid #d8b4fe; /* purple-300 */
+            border: 4px solid #d8b4fe;
             box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.2), 0 10px 10px -5px rgba(168, 85, 247, 0.1); 
             max-width: 350px;
             width: 100%;
@@ -264,7 +258,7 @@
             left: -25%; 
             width: 150%;
             height: 230px;
-            background: linear-gradient(to top, #c084fc, #faf5ff); /* Lavender gradient */
+            background: linear-gradient(to top, #c084fc, #faf5ff);
             border-radius: 50%;
             z-index: -1;
             opacity: 0.7;
@@ -281,7 +275,7 @@
         .cassette {
             width: 100%;
             height: 100%;
-            background: #3b0764; /* Dark Purple base */
+            background: #3b0764; 
             border-radius: 12px;
             position: relative;
             cursor: pointer;
@@ -386,6 +380,21 @@
             border-right: 2px solid #2e1065;
             border-radius: 8px 8px 0 0;
         }
+        
+        /* Equalizer Animation for Main Song Button */
+        .eq-bar {
+            width: 3px;
+            background-color: white;
+            border-radius: 2px;
+            animation: equalize 0.8s infinite alternate ease-in-out;
+        }
+        .eq-1 { height: 12px; animation-delay: -0.4s; }
+        .eq-2 { height: 18px; animation-delay: -0.2s; }
+        .eq-3 { height: 10px; animation-delay: 0s; }
+        @keyframes equalize {
+            0% { height: 6px; }
+            100% { height: 16px; }
+        }
 
         .hidden-page { display: none !important; }
 
@@ -469,8 +478,8 @@
             display: block;
         }
 
-        .photo-grid::-webkit-scrollbar { width: 4px; }
-        .photo-grid::-webkit-scrollbar-thumb { background: var(--accent-main); border-radius: 10px; }
+        .photo-grid::-webkit-scrollbar, #cassette-list::-webkit-scrollbar, .max-h-\[55vh\]::-webkit-scrollbar { width: 4px; }
+        .photo-grid::-webkit-scrollbar-thumb, #cassette-list::-webkit-scrollbar-thumb, .max-h-\[55vh\]::-webkit-scrollbar-thumb { background: var(--accent-main); border-radius: 10px; }
         
         .envelope-emoji {
             font-size: 8rem;
@@ -553,11 +562,15 @@
 </head>
 <body>
 
+    <!-- AUDIO 1: Lagu Utama -->
     <audio id="bg-music" loop>
-        <!-- Lagu Utama: Beautiful In White (Requested to remain main song) -->
         <source src="https://birthdaysx.github.io/Musik/beautiful-in-white.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- AUDIO 2: Lagu Kaset (Akan terisi ketika kaset diklik) -->
+    <audio id="cassette-music"></audio>
+
+    <!-- CURTAIN & INDEX 1 -->
     <div id="transition-curtain">
         <div class="heart-loader">💜</div>  
     </div>
@@ -590,6 +603,7 @@
         <img src="https://media.tenor.com/pSUlqMMjzmcAAAAi/it%27s-dead-king-george.gif" class="bg-sticker" style="bottom: 15%; left: 8%; animation-delay: 2s;" alt="sticker">
         <img src="https://media.tenor.com/4z6I_eTZanwAAAAi/screaming-tom-lizard.gif" class="bg-sticker" style="bottom: 10%; right: 12%; animation-delay: 0.5s;" alt="sticker">
            
+        <!-- Page 0 -->
         <div id="page0" class="page-container">  
             <div class="glass-card"> 
                 <img src="https://media1.tenor.com/m/GCb5n9crRy4AAAAd/hoppers-lizard.gif" alt="Sticker" class="w-32 h-32 rounded-lg mb-4 relative z-10 mx-auto">
@@ -601,6 +615,7 @@
             </div> 
         </div>
  
+        <!-- Page 1 (Loading) -->
         <div id="page1" class="page-container hidden-page">
             <div class="glass-card">
                 <img src="https://media1.tenor.com/m/MI5DzBmG4V8AAAAC/tom-lizard.gif" alt="Sticker" class="w-32 h-32 rounded-lg mb-4 relative z-10 mx-auto">
@@ -617,6 +632,7 @@
             </div>
         </div>
 
+        <!-- Page 2 -->
         <div id="page2" class="page-container hidden-page">
             <div class="glass-card">
                 <p class="font-small text-sm mb-2 relative z-10 text-purple-700">Hello Princess Tiffanny,</p>
@@ -636,6 +652,7 @@
             </div>
         </div>
 
+        <!-- Page 3 -->
         <div id="page3" class="page-container hidden-page">
             <p class="font-small text-xl mb-1 text-purple-700">A special message</p> 
             <h2 class="font-big text-3xl mb-6 text-purple-900">For You 💜</h2>   
@@ -664,15 +681,29 @@
             <button onclick="nextPage(2)" class="btn-back mt-6">Back</button>
         </div>
 
+        <!-- Page 4 -->
         <div id="page4" class="page-container hidden-page">
-            <h2 class="font-big text-2xl mb-6 text-purple-900">Our Playlist</h2>
-            <p class="font-small text-lg italic mb-6 text-purple-800">play the music, click the cassette</p>  
+            <h2 class="font-big text-2xl mb-4 text-purple-900">Our Playlist</h2>
             
-            <div id="cassette-list" class="w-full max-w-xs mb-8 h-[55vh] overflow-y-auto px-4 pt-4">
+            <!-- TOMBOL PLAY LAGU UTAMA -->
+            <button id="main-song-btn" onclick="playMainSong()" class="mb-4 bg-purple-500 text-white px-5 py-2 rounded-full font-bold shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center space-x-2">
+                <span class="text-lg">🎶</span>
+                <span class="text-sm">Play Beautiful In White</span>
+                <!-- Equalizer Animation (Terlihat saat lagu utama diputar) -->
+                <div id="main-song-indicator" class="flex items-end space-x-[2px] h-4 ml-2">
+                    <div class="eq-bar eq-1"></div>
+                    <div class="eq-bar eq-2"></div>
+                    <div class="eq-bar eq-3"></div>
+                </div>
+            </button>
+            
+            <p class="font-small text-lg italic mb-2 text-purple-800">play the music, click the cassette</p>  
+            
+            <div id="cassette-list" class="w-full max-w-xs mb-8 h-[45vh] overflow-y-auto px-4 pt-4">
                 
-                <!-- Lagu 1: Beautiful in White -->
+                <!-- Lagu 1: Happy Birthday to You -->
                 <div class="cassette-container" onclick="playSong('https://birthdaysx.github.io/Musik/happy-birthday-to-you.mp3', this)"> 
-                    <div class="cassette playing">
+                    <div class="cassette">
                         <div class="screw top-l"></div><div class="screw top-r"></div><div class="screw bot-l"></div><div class="screw bot-r"></div>
                         <div class="cassette-label">
                             <p class="font-handwriting font-bold text-purple-900 text-lg leading-tight">Happy Birthday To You</p>
@@ -726,6 +757,7 @@
             </div>
         </div>
 
+        <!-- Page 5 -->
         <div id="page5" class="page-container hidden-page">
             <h2 class="font-big text-3xl mb-4 text-purple-900">Our Memories</h2>  
             <div class="photo-grid mb-6"> 
@@ -748,6 +780,7 @@
             </div>
         </div>
 
+        <!-- Page 6 -->
         <div id="page6" class="page-container hidden-page">
             <h2 class="font-big text-3xl mb-1 text-purple-900">WHY YOU MATTER</h2>
             <p class="font-small text-lg italic mb-8 text-purple-700">6 Hal yang membuatmu spesial</p>
@@ -796,6 +829,7 @@
             </div>
         </div>
 
+        <!-- Page 7 -->
         <div id="page7" class="page-container hidden-page">
             <h2 class="font-big text-2xl mb-6 text-purple-900">Birthday Gift!</h2>
             
@@ -839,7 +873,8 @@
          *********************************************/
         const mCanvas = document.getElementById('matrixCanvas');
         const mCtx = mCanvas.getContext('2d');
-        const mAudio = document.getElementById('bg-music'); 
+        const mainAudio = document.getElementById('bg-music'); 
+        const cassetteAudio = document.getElementById('cassette-music'); 
         const mOverlay = document.getElementById('mOverlay');
         const mStartBtn = document.getElementById('mStartBtn');
         const mTransitionBtn = document.getElementById('transitionBtn');
@@ -1191,7 +1226,8 @@
             setTimeout(() => {
                 mOverlay.style.display = 'none';
                 mState = "SWEEP";
-                mAudio.play().catch(e => console.log("Audio failed to play", e));
+                // Start Main Music When Site Start Button Clicked
+                mainAudio.play().catch(e => console.log("Audio failed to play", e));
             }, 1000);
         });
 
@@ -1249,7 +1285,6 @@
                 this.angle = Math.random() * Math.PI * 2;
                 this.spin = Math.random() * 0.05 - 0.025;
                 this.horizontalSpeed = Math.random() * 1 - 0.5;
-                // Petal color Soft Purple / White
                 this.color = `rgba(233, 213, 255, ${0.4 + Math.random() * 0.4})`; /* purple-200 */
             }
             update() {
@@ -1282,8 +1317,6 @@
             requestAnimationFrame(animateSakura);
         }
         animateSakura();
-
-        const vAudio = document.getElementById('bg-music');  
  
         function initExperience() {
             document.getElementById('page0').classList.add('hidden-page');
@@ -1302,13 +1335,39 @@
             }, 30);
         }
 
+        // FUNGSI PLAY LAGU KASET
         function playSong(url, element) {
+            // Hentikan/Jeda lagu utama
+            mainAudio.pause();
+            
+            // Hapus indikator equalizernya dari tombol lagu utama
+            document.getElementById('main-song-indicator').classList.add('hidden');
+
+            // Hapus kelas 'playing' dari semua kaset
             document.querySelectorAll('.cassette').forEach(c => c.classList.remove('playing'));
+            
+            // Tambahkan animasi ke kaset yg di klik
             element.querySelector('.cassette').classList.add('playing');
             
-            vAudio.pause();
-            vAudio.src = url;
-            vAudio.play().catch(e => console.log("Audio failed. Waiting for user interaction.", e));
+            // Putar lagu kaset
+            cassetteAudio.pause();
+            cassetteAudio.src = url;
+            cassetteAudio.play().catch(e => console.log("Audio failed.", e));
+        }
+
+        // FUNGSI KEMBALI PLAY LAGU UTAMA
+        function playMainSong() {
+            // Hentikan/Jeda lagu kaset
+            cassetteAudio.pause();
+            
+            // Hapus animasi 'playing' dari kaset yang sedang jalan
+            document.querySelectorAll('.cassette').forEach(c => c.classList.remove('playing'));
+            
+            // Munculkan indikator equalizer pada tombol Lagu Utama
+            document.getElementById('main-song-indicator').classList.remove('hidden');
+
+            // Mainkan/Lanjutkan kembali lagu utama
+            mainAudio.play().catch(e => console.log("Audio failed.", e));
         }
 
         function nextPage(n) {
@@ -1381,7 +1440,7 @@
                             i = tagEnd + 1;
                         }
                     } else {
-                        target.innerHTML += txt.charAt(i);
+                        target.innerHTML += txt.charAt(i); 
                         i++;
                     }
                     target.parentElement.scrollTop = target.parentElement.scrollHeight;
