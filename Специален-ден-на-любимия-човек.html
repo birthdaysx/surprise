@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Nama link: Специален ден на любимия човек -->
     <title>Специален ден на любимия човек</title>
     <!-- Menambahkan link font Quicksand agar terbaca di canvas -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
@@ -185,6 +184,7 @@
             .photo-4.reveal { top: 35%; right: 5%; }
             .photo-5.reveal { top: 65%; left: 35%; transform: rotate(5deg); }
         }
+        
         /* --------------------------- */
 
         .message-card {
@@ -250,13 +250,13 @@
 <body>
     <!-- AUDIO BACKGROUND -->
     <audio id="birthday-music" loop preload="auto">
-        <source src="https://birthdaysx.github.io/Musik/athousand-years.mp3" type="audio/mpeg">
+        <source src="https://birthdaysx.github.io/Musik/i-dont-want-to.mp3" type="audio/mpeg">
     </audio>
 
     <canvas id="canvas"></canvas>
  
     <!-- HALAMAN 1 -->
-    <div id="page-1" class="page">
+    <div id="page-1" class="page"> 
         <h1>Happy birthday <br>Favorit person!</h1>
         <button id="gift-button" aria-label="Buka Kado">🎁</button>
         <p style="color: #888; margin-top: 30px; letter-spacing: 1px; font-size: 14px;">кликнете върху подаръка за изненада</p>
@@ -287,7 +287,8 @@
         <div class="message-card" id="message-card">
             <h2>ЧЕСТИТ РОЖДЕН ДЕН<br>Александър Алексиев🤍</h2>
             <p id="typing-text"></p>
-            <p style="font-style: italic; margin-top: 15px;">от феновете ти, Ниа Хутагалунг</p>
+            <!-- PERBAIKAN: font-style: italic dihapus di bawah ini agar huruf 'т' tidak menjadi 'm' -->
+            <p style="margin-top: 15px; color: #dddddd;">от феновете ти, Ниа Хутагалунг</p>
             <button class="restart-btn" onclick="location.reload()">Започни отначало</button>
         </div>
     </div>
@@ -314,7 +315,6 @@
         const messageToType = "Макар да ни делят хиляди километри, се надявам да усещаш колко много ми е грижа за теб днес. Желая ти здраве, щастие, успехи в работата и много поводи за усмивки през цялата предстояща година. Нека този рожден ден ти донесе всичко, за което си мечтал. Наслади се на празника си и знай, че някой в Индонезия мисли за теб.";
 
         // DAFTAR UCAPAN (WISHES) DALAM BAHASA BULGARIA
-        // Dipecah agar pas di kanvas
         const wishes = [
             ["Бъди винаги", "здрав щастие"],
             ["дълъг", "живот"],
@@ -379,7 +379,6 @@
         }
 
         class Laser {
-            // Ditambahkan parameter isTextLaser untuk mengubah ledakan jadi tulisan otomatis
             constructor(targetX, targetY, isCinematic = false, isTextLaser = false) {
                 this.x = width / 2; 
                 this.y = height;
@@ -419,12 +418,10 @@
                     for (let i = 0; i < 280; i++) {
                         particles.push(new SharpParticle(this.x, this.y, `#9f3a33`, true));
                     }
-                    // Mengubah tulisan cinematic besar
                     setTimeout(() => createTextParticles(["ЧЕСТИТ", "РОЖДЕН ДЕН"], this.x, this.y, "#ffffff"), 1);
                     cinematicDone = true;
                     setTimeout(() => { nextPageBtn.style.display = 'block'; }, 5000);   
                 } else if (this.isTextLaser) {
-                    // Jika ini kembang api teks (otomatis), ubah ledakan jadi kata-kata wishes
                     const text = wishes[wishIndex];
                     createTextParticles(text, this.x, this.y, this.color);
                     wishIndex = (wishIndex + 1) % wishes.length;
@@ -482,9 +479,7 @@
                 return p.opacity > 0;
             });
 
-            // Loop untuk memunculkan kembang api otomatis selanjutnya setelah ledakan
             if (cinematicDone && lasers.length === 0) {
-                // Semua kembang api otomatis diset true supaya memunculkan teks (Wishes) bergiliran
                 lasers.push(new Laser(random(width * 0.1, width * 0.9), random(height * 0.15, height * 0.4), false, true));
             }
             requestAnimationFrame(animate);
@@ -525,11 +520,9 @@
             page3.classList.remove('hidden');
             document.body.style.overflowY = "auto";
             
-            // Memastikan video berputar saat halaman muncul
             const myVideo = document.querySelector('video');
             if(myVideo) myVideo.play().catch(error => console.log("Video autoplay error:", error));
 
-            // Animasi muncul Foto & Video satu per satu
             photoItems.forEach((item, i) => {
                 setTimeout(() => item.classList.add('reveal'), i * 300);
             });
