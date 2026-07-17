@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday AA🩵</title>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            touch-action: manipulation;
+        }
+
+        /* --- CANVAS LAYERING --- */
+        #canvas-fireworks, #canvas-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        #canvas-fireworks {
+            z-index: 1;
+            display: none;
+        }
+
+        #canvas-matrix {
+            z-index: 2;
+            opacity: 0; 
+            pointer-events: none; 
+        }
+
+        /* --- PAGES LAYERING --- */
+        .page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 1s ease-in-out, visibility 1s;
+        }
+
+        #page-3 {
+            position: absolute; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-bottom: 50px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 15;
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* --- PAGE 1: KADO --- */
+        #page-1 {
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); text-shadow: 0 0 10px #fff; }
+            to { transform: scale(1.05); text-shadow: 0 0 30px #89CFF0; }
+        }
+
+        #gift-button {
+            font-size: 100px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            user-select: none;
+            animation: wobble 2s infinite ease-in-out;
+            transition: transform 0.3s;
+            filter: drop-shadow(0 0 20px rgba(137, 207, 240, 0.4));
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-5deg) translateY(0); }
+            50% { transform: rotate(5deg) translateY(-20px); }
+        }
+
+        /* --- PAGE 2: FIREWORKS OVERLAY --- */
+        #page-2 {
+            pointer-events: auto;
+            background: transparent;
+        }
+
+        #wishes-hint-text {
+            position: fixed; 
+            top: 20px; 
+            color: rgba(255,255,255,0.7); 
+            letter-spacing: 2px; 
+            font-size: 14px; 
+            animation: pulse 1s infinite alternate; 
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+
+        #next-page-btn { 
+            position: fixed;
+            bottom: 50px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid white;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            font-size: 16px;
+            z-index: 20;
+            transition: all 0.3s;
+            pointer-events: auto;
+            display: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #next-page-btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 20px white;
+        }
+
+        /* --- PAGE 3: FOTO & PESAN --- */
+        .photo-gallery {
+            position: relative;
+            width: 100%;
+            max-width: 900px; 
+            height: 600px;
+            flex-shrink: 0;
+            margin: 0 auto; 
+        }
+
+        .photo-item {
+            position: absolute;
+            width: 180px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            pointer-events: auto;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0.1s, opacity 0.5s, top 0.5s;
+            z-index: 11;
+            opacity: 0;
+            top: 120%; 
+        }
+
+        .photo-item.reveal { opacity: 1; }
+
+        .photo-item:hover {
+            transform: scale(1.1) rotate(0deg) !important;
+            z-index: 50;
+        }
+
+        .photo-5:hover {
+            transform: translateX(-50%) scale(1.1) rotate(0deg) !important;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* --- POSISI FOTO (DESKTOP) --- */
+        .photo-1.reveal { top: 10%; left: 15%; transform: rotate(-12deg); }
+        .photo-2.reveal { top: 5%; right: 15%; transform: rotate(8deg); }
+        .photo-3.reveal { top: 40%; left: 20%; transform: rotate(5deg); }
+        .photo-4.reveal { top: 35%; right: 20%; transform: rotate(-8deg); }
+        .photo-5.reveal { top: 60%; left: 50%; transform: translateX(-50%) rotate(2deg); }
+
+        /* --- RESPONSIF UNTUK HP (MOBILE) --- */
+        @media (max-width: 768px) {
+            .photo-gallery { height: 500px; }
+            .photo-item { width: 130px; }
+            .photo-item img { height: 130px; }
+            
+            .photo-1.reveal { top: 5%; left: 8%; transform: rotate(-10deg); }
+            .photo-2.reveal { top: 8%; right: 8%; transform: rotate(8deg); }
+            .photo-3.reveal { top: 35%; left: 5%; transform: rotate(5deg); }
+            .photo-4.reveal { top: 38%; right: 5%; transform: rotate(-10deg); }
+            .photo-5.reveal { top: 65%; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+        }
+
+        .message-card {
+            position: relative;
+            z-index: 60;
+            max-width: 450px;
+            width: 85%;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7); 
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 20px; 
+        }
+
+        #typing-text { white-space: pre-wrap; }
+
+        .message-card.reveal {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .message-card h2 { color: #89CFF0; margin-bottom: 15px; font-size: 1.8rem; }
+        .message-card p { font-size: 1.05rem; line-height: 1.6; color: #fff; }
+        
+        .transition-btn { 
+            margin-top: 25px; 
+            padding: 10px 20px;
+            background: #89CFF0; 
+            color: white; 
+            border: none; 
+            border-radius: 20px;
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(137, 207, 240, 0.5);
+            transition: all 0.3s;
+            opacity: 0; 
+        }
+        .transition-btn:hover {
+            background: white;
+            color: #89CFF0;
+            box-shadow: 0 0 20px white;
+        }
+
+        #typing-text::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+            color: #89CFF0;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .scroll-hint {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            margin-top: 20px;
+            animation: bounce 2s infinite;
+            display: none;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        #credit-text {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            z-index: 100;
+            display: none;
+            pointer-events: none;
+        }
+
+        /* --- LINK GAMBAR AKHIR --- */
+        #final-link {
+            position: fixed;
+            bottom: 15%; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
+            text-align: center;
+            text-decoration: none;
+        }
+        #final-link img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%; 
+            border: 3px solid #89CFF0; 
+            box-shadow: 0 0 20px rgba(137, 207, 240, 0.6);
+            transition: transform 0.3s;
+        }
+        #final-link:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(137, 207, 240, 1);
+        }
+        #final-link p {
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+            text-shadow: 0 0 5px #89CFF0; 
+            animation: pulse 1s infinite alternate;
+            font-weight: bold;
+        }
+        #final-link.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style> 
+</head>
+<body>
+    <!-- LAGU: Ganti src dengan link MP3 lagu You're My Love My Life My Beginning jika sudah ada -->
+    <audio id="birthday-music" loop preload="auto">
+        <source src="https://birthdaysx.github.io/Foto6/its-youuu.mp3" type="audio/mpeg"> 
+    </audio>
+
+    <!-- Canvas 1: Kembang Api -->
+    <canvas id="canvas-fireworks"></canvas>
+    
+    <!-- Canvas 2: Efek Matrix --> 
+    <canvas id="canvas-matrix"></canvas>
+ 
+    <!-- HALAMAN 1 -->
+    <div id="page-1" class="page">
+        <h1>Happy Birthday!</h1>
+        <button id="gift-button" aria-label="Buka Kado">🎁</button>
+        <p style="color: #888; margin-top: 30px; letter-spacing: 1px;">Klik kado untuk kejutan</p>
+    </div>
+
+    <!-- HALAMAN 2 -->
+    <div id="page-2" class="page hidden">
+        <div id="wishes-hint-text">
+            ✨ Tap-tap layar untuk Wishes ✨
+        </div>
+        <button id="next-page-btn">Lihat Pesan Spesial ✨</button> 
+    </div>
+
+    <!-- HALAMAN 3 -->
+    <div id="page-3" class="page hidden">
+        <div class="photo-gallery">
+            <div class="photo-item photo-1"><img src="https://birthdaysx.github.io/Foto6/o1.jpeg" alt="Momen 1"></div>
+            <div class="photo-item photo-2"><img src="https://birthdaysx.github.io/Foto6/o2.jpeg" alt="Momen 2"></div>
+            <div class="photo-item photo-3"><img src="https://birthdaysx.github.io/Foto6/o3.jpeg" alt="Momen 3"></div>
+            <div class="photo-item photo-4"><img src="https://birthdaysx.github.io/Foto6/o4.jpeg" alt="Momen 4"></div>
+            <div class="photo-item photo-5"><img src="https://birthdaysx.github.io/Foto6/o5.jpeg" alt="Momen 5"></div>
+        </div> 
+
+        <div id="scroll-hint" class="scroll-hint">Scroll kebawah ya sayangg.. 👇</div>
+  
+        <div class="message-card" id="message-card"> 
+            <!-- Nama diubah menjadi aa -->
+            <h2>Happy Birthday<br>aa🩵</h2>  
+            <p id="typing-text"></p> 
+            <p style="font-style: italic; margin-top: 15px;">From Your Girlfriend</p> 
+            <button class="transition-btn" id="to-matrix-btn">Ada satu kejutan lagi...</button>
+        </div>
+    </div>
+ 
+    <div id="credit-text">🩵</div>
+ 
+    <!-- ELEMEN GAMBAR LINK -->
+    <a id="final-link" href="https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v" target="_blank" title="Klik untuk menuju link lagu spesial">
+        <img src="https://birthdaysx.github.io/Foto6/o7.jpeg" alt="Klik Gambar Ini"> 
+        <!-- Teks link akhir diubah -->
+        <p>happy birthday aa sayang ✨</p> 
+    </a>  
+
+    <script>
+        /* =========================================
+           SETUP GLOBAL & CANVAS
+           ========================================= */
+        const canvasFw = document.getElementById('canvas-fireworks');
+        const ctxFw = canvasFw.getContext('2d');
+        
+        const canvasM = document.getElementById('canvas-matrix');
+        const ctxM = canvasM.getContext('2d');
+
+        let width, height;
+
+        let runFireworks = false;
+        let runMatrix = false;
+        let m_state = "SWEEP"; 
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvasFw.width = width; 
+            canvasFw.height = height;
+            canvasM.width = width;
+            canvasM.height = height;
+            
+            if(runMatrix && m_state !== "SWEEP" && typeof initMatrixCanvas === 'function') {
+                initMatrixCanvas();
+            }
+        }
+        window.addEventListener('resize', resize); 
+        resize();
+
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        /* =========================================
+           BAGIAN 1: LOGIKA KEMBANG API (FIREWORKS)
+           ========================================= */
+        let fw_particles = [];
+        let fw_lasers = [];
+        let fw_cinematicDone = false;
+ 
+        // Update tanggal jadi 04 Agustus 2026, nickname jadi aa, dan typo diperbaiki (panjang)
+        const messageToType = "Tepat hari ini 04 Agustus 2026, it’s your special day aa💐\n"+"wish u all the best aa🤍 maacii aa udaa lahir kedunia ini dan jadi pasanganku. selamat bertumbuh jadi versi yang lebih baik setiap harinya, sayangku, cintaku. panjang umur dan sehat selalu ya aa, biar kita bisa bareng terus🥹💗 harapan akuu dihari ulang tahun aa, apapun yang aa minta, cari, dan harapkan, semoga satu persatu terwujud, hari ini dan seterusnya 🤍 semoga tuhan mengabulkan hal-hal baik yang benar-benar diinginkan hati aa. happy birthday aa💐 aku akan selalu ada buat aa, disetiap proses, disetiap hari, aku selalu sama aa🩵🩵"; 
+        const wishes = [["HAPPY BIRTHDAY","KESAYANGANKU"],["SEHAT","SELALU🩵"],"PANJANG UMUR",["DILANCARKAN","REZEKINYA"],["SEMUA WISHLIST","KAMU TERCAPAI"],"BAHAGIA TERUSS",["SELALU SAYANG","AKUU,HIHIHI"]]; 
+        let wishIndex = 0;
+
+        class SharpParticle {
+            constructor(x, y, color, isBig = false, targetX = null, targetY = null) {
+                this.x = x; 
+                this.y = y;
+                this.color = color;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = isBig ? random(8, 25) : random(2, 6);
+                this.velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
+                
+                this.friction = 0.94;
+                this.gravity = (targetX !== null) ? 0 : 0.025;
+                this.opacity = 1;
+                this.decay = (targetX !== null) ? 0.0001 : (isBig ? random(0.0015, 0.012) : random(0.015, 0.03));
+            }
+            draw() {
+                ctxFw.save();
+                ctxFw.globalAlpha = this.opacity;
+                ctxFw.beginPath();
+                ctxFw.moveTo(this.x, this.y);
+                ctxFw.lineTo(this.x - (this.velocity.x * 3), this.y - (this.velocity.y * 3));
+                ctxFw.strokeStyle = this.color;
+                ctxFw.lineWidth = 1.5;
+                ctxFw.stroke();
+                ctxFw.restore();
+            }
+            update() {
+                if(this.targetX !== null) {
+                    this.x += (this.targetX - this.x) * 0.1;
+                    this.y += (this.targetY - this.y) * 0.1;
+                    this.velocity.x *= 0.9;
+                    this.velocity.y *= 0.9;
+                } else {
+                    this.velocity.x *= this.friction;
+                    this.velocity.y *= this.friction;
+                    this.velocity.y += this.gravity;
+                    this.x += this.velocity.x;
+                    this.y += this.velocity.y;
+                }
+                this.opacity -= this.decay;
+            }
+        }
+
+        class Laser {
+            constructor(targetX, targetY, isCinematic = false) {
+                this.x = width / 2; 
+                this.y = height;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.isCinematic = isCinematic;
+                const angle = Math.atan2(targetY - this.y, targetX - this.x);
+                this.speed = isCinematic ? 0.01 : 2.5;             
+                this.acceleration = isCinematic ? 1.018   : 1.1;  
+                this.velocityUnit = { x: Math.cos(angle), y: Math.sin(angle) };
+                this.hue = isCinematic ? 0 : random(0, 360);
+                this.color = isCinematic ? '#E0FFFF' : `hsl(${this.hue}, 100%, 70%)`;
+            }
+            draw() {
+                ctxFw.save();
+                ctxFw.beginPath();
+                ctxFw.moveTo(this.x, this.y);
+                ctxFw.lineTo(this.x - this.velocityUnit.x * this.speed * 4, this.y - this.velocityUnit.y * this.speed * 4);
+                ctxFw.strokeStyle = this.color;
+                ctxFw.lineWidth = this.isCinematic ? 3 : 1;
+                ctxFw.stroke();
+                ctxFw.restore();
+            }
+            update() {
+                this.speed *= this.acceleration;
+                this.x += this.velocityUnit.x * this.speed;
+                this.y += this.velocityUnit.y * this.speed;
+                if (this.y <= this.targetY) {
+                    this.explode();
+                    return false;
+                }
+                return true;
+            } 
+            explode() {
+                if (this.isCinematic) { 
+                    for (let i = 0; i < 280; i++) {
+                        fw_particles.push(new SharpParticle(this.x, this.y, `#89CFF0`, true));
+                    }
+                    setTimeout(() => createTextParticles(["HAPPY BIRTHDAY","AA"], this.x, this.y, "#ffffff"), 1);
+                    fw_cinematicDone = true;
+                     
+                    setTimeout(() => {
+                        document.getElementById('wishes-hint-text').style.opacity = '1';
+                    }, 1000);
+
+                    setTimeout(() => { document.getElementById('next-page-btn').style.display = 'block'; }, 5000);  
+                } else {
+                    for (let i = 0; i < 50; i++) { 
+                        fw_particles.push(new SharpParticle(this.x, this.y, this.color));
+                    }
+                }
+            }
+        } 
+
+        function createTextParticles(text, centerX, centerY, color) {
+            const tempCanvas = document.createElement('canvas');
+            const tCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = 600;
+            tempCanvas.height = 200; 
+            
+            tCtx.fillStyle = 'red'; 
+            tCtx.font = "bold 50px 'Quicksand', sans-serif";
+            tCtx.textAlign = 'center';
+            tCtx.textBaseline = 'middle';
+
+            if (Array.isArray(text)) {
+                tCtx.fillText(text[0], 300, 60);
+                tCtx.fillText(text[1], 300, 120);
+            } else {
+                tCtx.fillText(text, 300, 100);
+            }
+            
+            const data = tCtx.getImageData(0, 0, 600, 200).data;
+            for (let y = 0; y < 200; y += 4) {
+                for (let x = 0; x < 600; x += 4) {
+                    if (data[(y * 600 + x) * 4 + 3] > 128) {
+                        const tx = centerX + (x - 300);
+                        const ty = centerY + (y - 100);
+                        fw_particles.push(new SharpParticle(centerX, centerY, color, true, tx, ty));
+                    }
+                }
+            }
+        }
+
+        function animateFireworks() {
+            if (!runFireworks) return;
+            ctxFw.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctxFw.fillRect(0, 0, width, height);
+
+            fw_lasers = fw_lasers.filter(l => {
+                l.draw();
+                return l.update();
+            });
+
+            fw_particles = fw_particles.filter(p => {
+                p.draw();
+                p.update();
+                return p.opacity > 0;
+            });
+
+            if (fw_cinematicDone && fw_lasers.length === 0) {
+                fw_lasers.push(new Laser(random(width * 0.1, width * 0.9), random(height * 0.1, height * 0.4)));
+            }
+            requestAnimationFrame(animateFireworks);
+        }
+
+        /* =========================================
+           BAGIAN 2: LOGIKA MATRIX & HEART (KEJUTAN)
+           ========================================= */
+        let m_particles = [];
+        let m_rippleParticles = []; 
+        let m_drops = []; 
+        let m_speeds = []; 
+        let m_gridChars = []; 
+        const m_fontSize = 14; 
+        const m_loveLetters = "ILOVEYOU".split(""); 
+        let m_columns, m_rows;
+        let m_frames = 0;
+        
+        let m_sweepProgress = 0; 
+        let m_isExploding = false;
+        let m_rainStarted = false; 
+        let m_textOpacity = 0; 
+
+        class MatrixParticle {
+            constructor(targetX, targetY, type = "normal") {
+                const centerX = width / 2;
+                const centerY = height / 2;
+
+                if (type === "ripple") {
+                    const startScale = 0.75; 
+                    this.x = centerX + (targetX - centerX) * startScale;
+                    this.y = centerY + (targetY - centerY) * startScale;
+                    this.size = Math.random() * 2 + 2.5; 
+                } else {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2 + 1.0;
+                }
+                
+                this.destX = targetX;
+                this.destY = targetY;
+                
+                this.color = (type === "ripple") ? "137, 207, 240" : "255, 255, 255"; 
+                this.active = true;
+                this.opacity = (type === "ripple") ? 0 : 1.0;
+                this.type = type; 
+
+                this.progress = 0;
+                this.speed = 0.015 + Math.random() * 0.02; 
+                
+                this.driftX = (Math.random() - 0.5) * 0.4;
+                this.driftY = (Math.random() - 0.5) * 0.4;
+                this.noiseOffset = Math.random() * 2000;
+                this.stayTime = 40; 
+                
+                this.vx = 0;
+                this.vy = 0;
+            }
+
+            update() {
+                if (this.type === "ripple") {
+                    if (this.progress < 1) {
+                        this.progress += this.speed;
+                        const startScale = 0.75;
+                        const centerX = width / 2;
+                        const centerY = height / 2;
+                        const startX = centerX + (this.destX - centerX) * startScale;
+                        const startY = centerY + (this.destY - centerY) * startScale;
+                        this.x = startX + (this.destX - startX) * this.progress;
+                        this.y = startY + (this.destY - startY) * this.progress;
+                        this.opacity = Math.min(this.progress * 4, 1);
+                    } else {
+                        this.x = this.destX + Math.sin(m_frames * 0.1 + this.noiseOffset) * 0.8;
+                        this.y = this.destY + Math.cos(m_frames * 0.1 + this.noiseOffset) * 0.8;
+                        this.stayTime--;
+                        this.opacity = this.stayTime / 40;
+                        if (this.stayTime <= 0) this.active = false;
+                    }
+                } else if (m_isExploding) {
+                    if (this.vx === 0 && this.vy === 0) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const force = Math.random() * 15 + 12; 
+                        this.vx = Math.cos(angle) * force;
+                        this.vy = Math.sin(angle) * force;
+                    }
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vx *= 0.985;
+                    this.vy *= 0.985;
+                } else if (m_state === "FINISHED" || m_state === "FINAL_HEART") {
+                    if (this.opacity > 0.25) this.opacity -= 0.005;
+                    this.x += this.driftX + Math.sin(m_frames * 0.02 + this.noiseOffset) * 0.15;
+                    this.y += this.driftY + Math.cos(m_frames * 0.02 + this.noiseOffset) * 0.15;
+                    this.vx = 0; this.vy = 0;
+                } else {
+                    let dx = this.destX - this.x;
+                    let dy = this.destY - this.y;
+                    this.x += dx * 0.07;
+                    this.y += dy * 0.07;
+                    this.vx = 0; this.vy = 0;
+                }
+            }
+
+            draw() {
+                if (!this.active || this.opacity <= 0) return;
+                ctxM.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+                if (this.type === "ripple") {
+                    this.drawHeart(this.x, this.y, this.size * 2.8); 
+                } else {
+                    ctxM.beginPath();
+                    ctxM.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctxM.fill();
+                }
+            }
+
+            drawHeart(x, y, size) {
+                ctxM.beginPath();
+                ctxM.moveTo(x, y + size / 4);
+                ctxM.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + size / 4);
+                ctxM.bezierCurveTo(x - size / 2, y + size / 2, x, y + size * 0.75, x, y + size);
+                ctxM.bezierCurveTo(x, y + size * 0.75, x + size / 2, y + size / 2, x + size / 2, y + size / 4);
+                ctxM.bezierCurveTo(x + size / 2, y, x, y, x, y + size / 4);
+                ctxM.fill();
+            }
+        }
+
+        function initMatrixCanvas() {
+            m_columns = Math.ceil(width / m_fontSize);
+            m_rows = Math.ceil(height / m_fontSize);
+            
+            m_drops = []; m_speeds = []; m_gridChars = [];
+            for (let i = 0; i < m_columns; i++) {
+                m_drops[i] = -Math.random() * 20; 
+                m_speeds[i] = 0.1 + Math.random() * 0.3; 
+                m_gridChars[i] = [];
+                for (let j = 0; j < m_rows; j++) {
+                    m_gridChars[i][j] = m_loveLetters[Math.floor(Math.random() * m_loveLetters.length)];
+                }
+            }
+        }
+
+        function getHeartOutlinePoints(count) {
+            const points = [];
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = Math.min(width, height) / 45; 
+
+            for (let i = 0; i < count; i++) {
+                const t = (i / count) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                points.push({
+                    x: centerX + x * scale,
+                    y: centerY + y * scale
+                });
+            }
+            return points;
+        }
+
+        function getTextPoints(text) {
+            const points = [];
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            
+            const isTransition = isNaN(text) && text.length <= 4 || text.length === 1;
+            let tSize;
+            if (isTransition) {
+                tSize = !isNaN(text) ? Math.min(width / 2.2, 400) : Math.min(width / 3.5, 250);
+            } else {
+                tSize = Math.min(width / 4, 180);
+            }
+
+            tempCtx.font = `bold ${tSize}px Arial`;
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            tempCtx.fillStyle = 'white';
+            tempCtx.fillText(text, width / 2, height / 2);
+            
+            const data = tempCtx.getImageData(0, 0, width, height).data;
+            for (let y = 0; y < height; y += 5) {
+                for (let x = 0; x < width; x += 5) {
+                    if (data[(y * width + x) * 4 + 3] > 128) points.push({ x, y }); 
+                }
+            }
+            return points;
+        }
+
+        function updateParticleTargets(text) {
+            const newPoints = getTextPoints(text);
+            for (let i = 0; i < Math.max(m_particles.length, newPoints.length); i++) {
+                if (i < newPoints.length) {
+                    if (i < m_particles.length) {
+                        m_particles[i].destX = newPoints[i].x;
+                        m_particles[i].destY = newPoints[i].y;
+                        m_particles[i].active = true;
+                    } else {
+                        m_particles.push(new MatrixParticle(newPoints[i].x, newPoints[i].y));
+                    }
+                } else if (m_particles[i]) {
+                    m_particles[i].active = false;
+                }
+            }
+        }
+
+        let m_rippleTimer = 0;
+        function createHeartRipple() {
+            if (m_rippleTimer % 20 === 0) {
+                const outline = getHeartOutlinePoints(150); 
+                outline.forEach(pt => {
+                    m_rippleParticles.push(new MatrixParticle(pt.x, pt.y, "ripple"));
+                });
+            }
+            m_rippleTimer++;
+        }
+
+        async function startParticleSequence() {
+            m_state = "SEQUENCE";
+            const countdown = ["3", "2", "1"]; 
+            for (let text of countdown) {
+                updateParticleTargets(text); 
+                await new Promise(r => setTimeout(r, 2000)); 
+            } 
+            m_isExploding = true;
+            await new Promise(r => setTimeout(r, 2200)); 
+            m_isExploding = false;
+
+            const finalWords = ["I", "Hope", "You'll", "Be", "Mine", "Now", "And", "Forever"];
+            for (let word of finalWords) {
+                updateParticleTargets(word);
+                await new Promise(r => setTimeout(r, 2000)); 
+            }
+            m_isExploding = true;
+            await new Promise(r => setTimeout(r, 800)); 
+            m_isExploding = false;
+            
+            m_state = "FINAL_HEART";
+            document.getElementById('credit-text').style.display = 'block'; 
+
+            // TAMPILKAN GAMBAR LINK SETELAH 1.5 DETIK
+            setTimeout(() => {
+                document.getElementById('final-link').classList.add('show');
+            }, 1500); 
+        }
+
+        function drawMatrixGrid() {
+            ctxM.fillStyle = "rgba(0, 0, 0, 0.25)";
+            ctxM.fillRect(0, 0, width, height);
+            ctxM.font = m_fontSize + "px monospace";
+            
+            if (m_state === "SWEEP") {
+                m_sweepProgress += 0.45; 
+                if (m_sweepProgress >= m_rows * 0.7) m_rainStarted = true;
+                if (m_sweepProgress >= m_rows + 15) {
+                    m_state = "WAITING";
+                    startParticleSequence();
+                }
+                
+                const currentLimit = Math.floor(m_sweepProgress);
+                for (let i = 0; i < m_columns; i++) {
+                    for (let j = 0; j <= currentLimit && j < m_rows; j++) {
+                        const distFromEdge = currentLimit - j;
+                        if (distFromEdge < 15) {
+                            const op = 1 - (distFromEdge / 15);
+                            ctxM.fillStyle = `rgba(137, 207, 240, ${op * 0.6})`;
+                            ctxM.fillText(m_gridChars[i][j], i * m_fontSize, j * m_fontSize);
+                        }
+                    }
+                }
+            }
+            
+            if (m_rainStarted) {
+                for (let i = 0; i < m_columns; i++) {
+                    m_drops[i] += m_speeds[i];
+                    if (m_drops[i] > m_rows && Math.random() > 0.985) m_drops[i] = 0;
+                    const currentRow = Math.floor(m_drops[i]);
+                    for (let j = 0; j < 10; j++) {
+                        const r = currentRow - j;
+                        if (r >= 0 && r < m_rows) {
+                            ctxM.fillStyle = `rgba(137, 207, 240, ${0.2 * (1 - j/10)})`;
+                            ctxM.fillText(m_gridChars[i][r], i * m_fontSize, r * m_fontSize);
+                        }
+                    }
+                }
+            }
+        }
+
+        function drawFinalText() {
+            if (m_state === "FINAL_HEART") {
+                if (m_textOpacity < 1) m_textOpacity += 0.01;
+                
+                const fontSize = Math.min(width / 24, 26);
+                ctxM.font = `bold ${fontSize}px "Comic Sans MS", cursive`;
+                ctxM.textAlign = 'center'; 
+                ctxM.textBaseline = 'middle';
+                ctxM.fillStyle = `rgba(255, 255, 255, ${m_textOpacity})`;
+
+                const lineHeight = fontSize * 1.5; 
+                ctxM.fillText("i'm always proud of you", width / 2, (height / 2) - (lineHeight / 2));
+                ctxM.fillText("and i love you🩵", width / 2, (height / 2) + (lineHeight / 2));
+            }
+        }
+
+        function animateMatrix() {
+            if (!runMatrix) return;
+            drawMatrixGrid();
+            
+            if (m_state !== "SWEEP") {
+                m_particles.forEach(p => { p.update(); p.draw(); });
+            }
+            
+            if (m_state === "FINAL_HEART") {
+                createHeartRipple();
+                for (let i = m_rippleParticles.length - 1; i >= 0; i--) {
+                    m_rippleParticles[i].update();
+                    if (!m_rippleParticles[i].active) m_rippleParticles.splice(i, 1);
+                    else m_rippleParticles[i].draw();
+                }
+                drawFinalText();
+            }
+            
+            m_frames++;
+            requestAnimationFrame(animateMatrix);
+        }
+
+        /* =========================================
+           BAGIAN 3: ALUR INTERAKSI & TRANSISI
+           ========================================= */
+
+        function typeWriter(text, elementId, speed, callback) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = ""; 
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    if(callback) callback();
+                }
+            }
+            type();
+        }
+
+        // TAHAP 1: BUKA KADO
+        document.getElementById('gift-button').addEventListener('click', () => {
+            const music = document.getElementById('birthday-music');
+            music.play().catch(error => console.log("Musik diblokir browser:", error));
+            
+            document.getElementById('page-1').classList.add('hidden');
+            
+            canvasFw.style.display = 'block';
+            document.getElementById('page-2').classList.remove('hidden');
+            
+            runFireworks = true;
+            setTimeout(() => {
+                fw_lasers.push(new Laser(width / 2, height * 0.25, true));
+                animateFireworks();
+            }, 500);
+        });
+
+        // Event Klik Layar 
+        window.addEventListener('pointerdown', (e) => {
+            if (runFireworks && fw_cinematicDone && e.target.id !== 'next-page-btn' && e.target.id !== 'to-matrix-btn') {
+                const text = wishes[wishIndex];
+                const randomColor = `hsl(${Math.random() * 360}, 100%, 75%)`;
+                createTextParticles(text, e.clientX, e.clientY, randomColor);
+                wishIndex = (wishIndex + 1) % wishes.length;
+            }
+        }, { passive: true });
+
+        // TAHAP 2: PINDAH KE FOTO DAN PESAN
+        document.getElementById('next-page-btn').onclick = (e) => {
+            e.stopPropagation(); 
+            document.getElementById('page-2').classList.add('hidden');
+            document.getElementById('page-3').classList.remove('hidden');
+            document.body.style.overflowY = "auto";
+            
+            const photoItems = document.querySelectorAll('.photo-item');
+            photoItems.forEach((item, i) => {
+                setTimeout(() => item.classList.add('reveal'), i * 300);
+            });
+
+            setTimeout(() => {
+                document.getElementById('message-card').classList.add('reveal');
+                if(window.innerWidth < 768) document.getElementById('scroll-hint').style.display = 'block';
+                
+                setTimeout(() => {
+                    typeWriter(messageToType, "typing-text", 50, () => {
+                        const toMatrixBtn = document.getElementById('to-matrix-btn');
+                        toMatrixBtn.style.opacity = '1';
+                    });
+                }, 800);
+            }, 1800);
+        };
+
+        // TAHAP 3: TRANSISI KE MATRIX
+        document.getElementById('to-matrix-btn').onclick = (e) => {
+            e.stopPropagation();
+            
+            document.getElementById('page-3').style.opacity = '0';
+            
+            canvasFw.style.opacity = '0';
+            canvasM.style.opacity = '1';
+            canvasM.style.pointerEvents = 'auto'; 
+            
+            document.body.style.overflowY = "hidden";
+
+            setTimeout(() => {
+                document.getElementById('page-3').style.display = 'none';
+                runFireworks = false; 
+                canvasFw.style.display = 'none';
+                
+                initMatrixCanvas();
+                runMatrix = true;
+                animateMatrix();
+            }, 1500); 
+        };
+    </script>
+</body>
+</html>
