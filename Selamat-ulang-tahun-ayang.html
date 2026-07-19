@@ -142,10 +142,10 @@
         }
         .polaroid-content img, .polaroid-content video {
             width: 100%; 
-            height: 100%;  
-            object-fit: cover; 
-            object-position: top; /* <--- Tambahkan baris ini */
-            display: block;
+            height: 100%;   
+            object-fit: cover;  
+            object-position: 50% 65%; /* <--- Tambahkan baris ini */   
+            display: block; 
         }
 
         .scroll-reveal {
@@ -520,11 +520,12 @@
 
     <!-- PAGE 5: Penutup Utama & Explore Menu -->
     <div id="page-5" class="page page-scrollable hidden-page bg-transparent w-full pb-16">  
-        <div class="w-full max-w-2xl mx-auto px-4 pt-20 flex flex-col items-center">
+        <div class="w-full max-w-2xl mx-auto px-4 pt-20 flex flex-col items-center"> 
             
             <!-- Video Akhir (Media Kenangan) -->
-            <div class="w-full rounded-2xl overflow-hidden shadow-[0_15px_35px_rgba(10,88,202,0.25)] mb-8 scroll-reveal border border-white/10 aspect-video relative bg-black">
-                <video id="final-video" src="https://birthdaysx.github.io/Foto6/r1.mov" controls playsinline class="w-full h-full object-cover" loop muted autoplay playsinline class="..."></video>
+            <div class="w-full rounded-2xl overflow-hidden shadow-[0_15px_35px_rgba(10,88,202,0.25)] mb-8 scroll-reveal border border-white/10 aspect-video relative bg-black"> 
+                <!-- Penambahan style="object-position: 50% 20%;" agar tampilan video naik ke atas sedikit dan tidak terlalu terpotong -->
+                <video id="final-video" src="https://birthdaysx.github.io/Foto6/r1.mov" controls playsinline class="w-full h-full object-cover" style="object-position: 50% 65%;" loop muted autoplay></video> 
             </div>
  
             <div class="glass-panel w-full p-6 md:p-8 relative overflow-hidden text-left mb-6 scroll-reveal">
@@ -1120,7 +1121,7 @@
             }
             type();
         }
-
+ 
         document.addEventListener("DOMContentLoaded", () => {
             startCountdown(); 
             const observer = new IntersectionObserver((entries) => {
