@@ -98,17 +98,22 @@
             border: 5px solid white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             margin-bottom: 15px;
+            box-sizing: border-box;
         }
 
+        /* PERBAIKAN: Agar foto 2 selalu berdampingan dan tidak turun ke bawah */
         .photo-group {
             display: flex;
             gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Memaksa elemen tetap 1 baris menyamping */
+            width: 100%;
         }
 
         .photo-small {
-            width: 130px;
+            width: 45%; /* Menggunakan persentase agar bisa mengecil di layar HP */
+            max-width: 130px; /* Batas maksimal ukuran agar tidak terlalu besar di PC */
+            height: auto;
         }
 
         .calendar {
@@ -145,7 +150,6 @@
             transform: translate(-50%, -50%);
             width: 30px; 
             height: 30px; 
-            /* Warna SVG diubah menjadi Coklat (#8b5a2b) */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b5a2b'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             background-size: contain;
             background-repeat: no-repeat;
@@ -226,7 +230,7 @@
         }
 
         .custom-popup-overlay {
-            display: none; /* Sembunyikan default */
+            display: none; 
             position: fixed;
             top: 0;
             left: 0;
@@ -288,7 +292,7 @@
                 <img src="https://media.tenor.com/6yBqtjeP1ekAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif">
                 <h1>HAPPY BIRTHDAY IKARAA,<br>GANTENGGNYAA FII<br>૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა</h1> 
                 <p style="font-size: 0.85rem; margin-top: 10px;">click to open ✨</p> 
-                <button class="single-btn" onclick="nextPage(1)">Buka <3</button> 
+                <button class="single-btn" onclick="nextPage(1)">Buka &lt;3</button> 
             </div>
 
             <div class="page" id="p2"> 
@@ -309,7 +313,7 @@
                 </div> 
                 <p class="long-text">Haii Ikaraa, moment yang kamu tunggu tunggu selama satu tahun ini...<br><br>Terimakasih yaa sudah mau bertahan sejauh ini.. dengan ditemani semua rasa yang tidak bisa kmu ungkap kan melalui sebuah kata kata.. tapi aku selalu bangga lihat kmu bisa melangkah sejauh ini..🫶🏻</p>
                 <div class="btn-group">
-                    <button onclick="nextPage(2)">Lanjut <3</button>
+                    <button onclick="nextPage(2)">Lanjut &lt;3</button>
                     <button onclick="prevPage(2)" class="back-btn">Kembali</button>
                 </div> 
             </div>
@@ -318,7 +322,7 @@
                 <img src="https://media.tenor.com/Pnxv-9Bp0DUAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
                 <p>Cieee... Ultramen yang ganteng ini akhirnya nambah usia.<br><br>Semoga makin keren, makin sukses, dan... makin sayang sama Fi. 🤏🏻🤍</p>
                 <div class="btn-group">
-                    <button onclick="nextPage(3)">Aamiin <3</button>  
+                    <button onclick="nextPage(3)">Aamiin &lt;3</button>  
                     <button onclick="prevPage(3)" class="back-btn">Kembali</button>
                 </div>
             </div>
@@ -327,7 +331,7 @@
                 <img src="https://media.tenor.com/vroVodINV0EAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
                 <p class="long-text">Okeee, sekarang waktunya buka hadiah kecil dari Fi. 🤏🏻🤍<br><br>Bacanya pelan-pelan ya... terus dengerin juga sampai selesai. Semoga kamu suka, semoga bisa bikin Ultramen senyum-senyum sendiri. Jangan protes kalau isinya agak manis, soalnya emang sengaja aku buat spesial buat kamu.<br><br>Selamat menikmati yaa. ✨</p>
                 <div class="btn-group">
-                    <button onclick="nextPage(4)">Okeii <3</button>  
+                    <button onclick="nextPage(4)">Okeii &lt;3</button>  
                     <button onclick="prevPage(4)" class="back-btn">Kembali</button>
                 </div>
             </div>
@@ -342,8 +346,11 @@
             </div> 
 
             <div class="page" id="p6">
-                <img src="https://birthdaysx.github.io/Foto6/itu2.jpg" class="photo-frame photo-small">
-                <img src="https://birthdaysx.github.io/Foto6/itu5.jpg" class="photo-frame photo-small">   
+                <!-- PERBAIKAN: Dibungkus dengan class photo-group agar tata letak terjaga -->
+                <div class="photo-group">
+                    <img src="https://birthdaysx.github.io/Foto6/itu2.jpg" class="photo-frame photo-small">
+                    <img src="https://birthdaysx.github.io/Foto6/itu5.jpg" class="photo-frame photo-small">   
+                </div>
                 <p class="long-text">Cieee... ternyata Ultramen kecil udah tumbuh sejauh ini ya. 🤏🏻🤍<br><br>Lihat semua foto ini bikin Fi bangga banget sama Ikara. Dari anak kecil yang penuh rasa penasaran, sampai jadi Ikara yang sekarang yang terus berjuang buat masa depannya. Pasti nggak semua prosesnya mudah, tapi hebatnya kamu nggak berhenti melangkah.<br><br>Jadi, terus semangat ya. Fi bakal selalu bangga sama setiap langkah kecil yang kamu ambil. Dan nanti, waktu semua mimpi kamu satu per satu terwujud, semoga kamu ingat kalau dari awal ada seseorang yang diam-diam ikut bangga ngelihat proses kamu. 🤍✨</p>
                 <div class="btn-group"> 
                     <button onclick="nextPage(6)">♡</button>  
@@ -360,7 +367,6 @@
                 <div class="voice-note-container">
                     <p style="font-size: 0.8rem; margin-bottom: 5px;">Dengerin pesan dari Fi yaa 🤍</p>
                     <audio id="voiceNote" controls>
-                        <!-- Nanti ganti link.mp3 dengan link asli voice note-nya -->
                         <source src="https://birthdaysx.github.io/Musik/lagu1.mp3" type="audio/mpeg"> 
                     </audio>
                 </div>
@@ -377,7 +383,6 @@
                 <div id="typewriter"></div>   
                 
                 <div class="btn-group" id="p8-buttons" style="display: none; animation: fadeIn 1s;"> 
-                    <!-- Silakan ganti nomer WA jika perlu -->
                     <button id="waButton" onclick="balasWA()">Balas pesan ini 🥰</button>
                     <button onclick="prevPage(8)" class="back-btn">Kembali</button>
                 </div>
@@ -386,10 +391,8 @@
         </div>
     </div>
 
-    <!-- Custom Popup Alert (Hidden by default) -->
     <div id="customAlert" class="custom-popup-overlay">
         <div class="custom-popup-box">
-            <!-- Stiker marah lucu dari tenor (Bubu marah) -->
             <img src="https://media.tenor.com/BrJjmVscA4YAAAAi/bubu-angry-bubu-fierce.gif" alt="Angry Sticker" class="popup-sticker">
             <h2 style="margin: 0; font-size: 1.2rem; color: var(--accent-brown);">Eitss!</h2>
             <p style="font-size: 1rem; margin-top: 10px;">Dengerin duluu voicenya sampai selesai yaa! 😠🤍</p>
@@ -446,7 +449,6 @@
         }
         generateCalendar();
 
-        // Variabel untuk melacak apakah voice note sudah selesai
         let isVoiceNoteFinished = false;
 
         function closeAlert() {
@@ -454,7 +456,7 @@
             alertBox.classList.remove('show');
             setTimeout(() => {
                 alertBox.style.display = 'none';
-            }, 300); // Sesuaikan dengan durasi transisi CSS
+            }, 300); 
         }
 
         function nextPage(current) {
@@ -464,17 +466,13 @@
                 });
             }
 
-            // Pengecekan untuk Halaman 7 (Voice Note)
             if (current === 7) {
                 if (!isVoiceNoteFinished) {
-                    // Jika belum selesai, tampilkan popup dan batalkan pindah halaman
                     const alertBox = document.getElementById('customAlert');
                     alertBox.style.display = 'flex';
-                    // Trigger reflow untuk animasi
                     setTimeout(() => alertBox.classList.add('show'), 10);
                     return; 
                 } else {
-                    // Jika sudah selesai, mainkan confetti dan lanjut
                     confetti({
                         particleCount: 150,
                         spread: 70,
@@ -552,9 +550,7 @@ Oh iya... jangan lupa sering-sering senyum ya. Soalnya senyummu lumayan bikin se
                 }
             };
 
-            // Saat voice note selesai diputar sampai habis (Ended)
             voiceNote.onended = function() {
-                // Tandai bahwa voice note sudah selesai
                 isVoiceNoteFinished = true;
                 
                 if (window.bgMusicWasPlaying) {
