@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Ikara!</title>   
+    <style>
+        :root {  
+            /* Mengubah warna tema ke Coklat Pastel / Earth Tone */
+            --brown-soft: #b88548;
+            --brown-bright: #9b7336;
+            --text-color: #5c4033;
+            --accent-brown: #8b5a2b;  
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom, var(--brown-soft), var(--brown-bright));
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        .emoji-rain {
+            position: fixed;
+            top: -10%;
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        #content-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 8px 32px 0 rgba(139, 90, 43, 0.15);
+            border: 2px solid rgba(139, 90, 43, 0.3);
+            max-width: 400px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        /* Sembunyikan scrollbar untuk estetika */
+        .glass-card::-webkit-scrollbar {
+            display: none;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .sticker-gif {
+            width: 160px;
+            height: auto; 
+            margin-bottom: 10px;
+        }
+
+        .photo-frame {
+            width: 180px;
+            border-radius: 15px;
+            border: 5px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        .photo-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .photo-small {
+            width: 130px;
+        }
+
+        .calendar {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            width: 200px;
+            margin: 15px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 0.8rem;
+        }
+        .calendar-header {
+            font-weight: bold;
+            color: var(--accent-brown);
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        .day {
+            padding: 5px 0;
+            position: relative;
+            z-index: 1; 
+        }
+        
+        .today-circle {
+            position: absolute;
+            top: 55%;   
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px; 
+            height: 30px; 
+            /* Warna SVG diubah menjadi Coklat (#8b5a2b) */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238b5a2b'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: circleScale 0.8s ease-out forwards; 
+            animation-delay: 1s;
+            opacity: 0;
+            z-index: -1; 
+        }  
+        @keyframes circleScale {
+            from { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+
+        h1 { font-size: 1.3rem; margin: 1px 0; color: #444; }
+        h3 { font-size: 1rem; color: #555; }
+        p { font-size: 0.95rem; margin: 5px 0; line-height: 1.5; font-weight: bold;}
+        .long-text { font-size: 0.85rem; font-weight: 600; text-align: center; }
+        
+        button { 
+            background-color: var(--accent-brown);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.3);
+            transition: 0.3s;
+            width: 100%; 
+            max-width: 250px; 
+        }
+        button:hover { transform: scale(1.05); background-color: #a47244; }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            gap: 12px; 
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            background-color: rgba(139, 90, 43, 0.1);
+            color: var(--text-color);
+            border: 2px solid var(--accent-brown);
+            box-shadow: none;
+            padding: 8px 20px; 
+            font-size: 0.85rem;
+            width: auto; 
+            min-width: 120px;
+        }
+        .back-btn:hover { background-color: rgba(139, 90, 43, 0.2); }
+        .single-btn { margin-top: 20px; }
+
+        #typewriter {
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            text-align: left;
+            max-width: 100%;
+            height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        
+        .voice-note-container {
+            width: 100%;
+            margin: 15px 0;
+        }
+        audio {
+            width: 100%;
+            height: 40px;
+        }
+
+        .custom-popup-overlay {
+            display: none; /* Sembunyikan default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .custom-popup-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 300px;
+            width: 80%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid var(--accent-brown);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .custom-popup-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .custom-popup-overlay.show .custom-popup-box {
+            transform: scale(1);
+        }
+
+        .popup-sticker {
+            width: 120px;
+            margin-bottom: 15px;
+        }
+
+        .popup-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://birthdaysx.github.io/Musik/panjang-umur.mp3" type="audio/mpeg">
+    </audio> 
+
+    <div id="content-container"> 
+        <div class="glass-card"> 
+             
+            <div class="page active" id="p1"> 
+                <img src="https://media.tenor.com/6yBqtjeP1ekAAAAi/bubu-dudu-sseeyall.gif" class="sticker-gif">
+                <h1>HAPPY BIRTHDAY IKARAA,<br>GANTENGGNYAA FII<br>૮₍ ˶ᵔ ᵕ ᵔ˶ ₎ა</h1> 
+                <p style="font-size: 0.85rem; margin-top: 10px;">click to open ✨</p> 
+                <button class="single-btn" onclick="nextPage(1)">Buka <3</button> 
+            </div>
+
+            <div class="page" id="p2"> 
+                <div class="calendar"> 
+                    <div class="calendar-header" id="monthLabel">Agustus 2026</div>
+                    <div class="calendar-weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); font-size: 0.75rem; font-weight: bold; color: #8b5a2b; margin-bottom: 5px;">
+                        <div>Min</div>
+                        <div>Sen</div>
+                        <div>Sel</div>
+                        <div>Rab</div>
+                        <div>Kam</div>
+                        <div>Jum</div>
+                        <div>Sab</div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Grid akan dibuat oleh JavaScript -->
+                    </div>
+                </div> 
+                <p class="long-text">Haii Ikaraa, moment yang kamu tunggu tunggu selama satu tahun ini...<br><br>Terimakasih yaa sudah mau bertahan sejauh ini.. dengan ditemani semua rasa yang tidak bisa kmu ungkap kan melalui sebuah kata kata.. tapi aku selalu bangga lihat kmu bisa melangkah sejauh ini..🫶🏻</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(2)">Lanjut <3</button>
+                    <button onclick="prevPage(2)" class="back-btn">Kembali</button>
+                </div> 
+            </div>
+
+            <div class="page" id="p3"> 
+                <img src="https://media.tenor.com/Pnxv-9Bp0DUAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
+                <p>Cieee... Ultramen yang ganteng ini akhirnya nambah usia.<br><br>Semoga makin keren, makin sukses, dan... makin sayang sama Fi. 🤏🏻🤍</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(3)">Aamiin <3</button>  
+                    <button onclick="prevPage(3)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <div class="page" id="p4">
+                <img src="https://media.tenor.com/vroVodINV0EAAAAi/tkthao219-bubududu.gif" class="sticker-gif">
+                <p class="long-text">Okeee, sekarang waktunya buka hadiah kecil dari Fi. 🤏🏻🤍<br><br>Bacanya pelan-pelan ya... terus dengerin juga sampai selesai. Semoga kamu suka, semoga bisa bikin Ultramen senyum-senyum sendiri. Jangan protes kalau isinya agak manis, soalnya emang sengaja aku buat spesial buat kamu.<br><br>Selamat menikmati yaa. ✨</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(4)">Okeii <3</button>  
+                    <button onclick="prevPage(4)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+            <div class="page" id="p5">
+                <img src="https://birthdaysx.github.io/Foto6/itu1.jpeg" class="photo-frame"> 
+                <p class="long-text">Aku nggak cuma mau support kamu pas lagi ngejar mimpi yang besar. Hal-hal kecil yang bikin kamu bahagia—kayak main bola, ngumpul sama temen, atau sekadar cerita tentang hari kamu—aku juga pengen ikut nemenin dan dukung semuanya.<br><br>Jadi, terus semangat ya, Ra. Aku bakal selalu jadi orang yang bangga sama setiap langkah kecil yang kamu ambil. Ultramen favorit Fi pasti bisa. 🤍⚽</p>
+                <div class="btn-group">
+                    <button onclick="nextPage(5)">Lanjut (♡ ᵔ ᵕ ᵔ ♡)</button> 
+                    <button onclick="prevPage(5)" class="back-btn">Kembali</button> 
+                </div>
+            </div> 
+
+            <div class="page" id="p6">
+                <img src="https://birthdaysx.github.io/Foto6/itu2.jpg" class="photo-frame photo-small">
+                <img src="https://birthdaysx.github.io/Foto6/itu5.jpg" class="photo-frame photo-small">   
+                <p class="long-text">Cieee... ternyata Ultramen kecil udah tumbuh sejauh ini ya. 🤏🏻🤍<br><br>Lihat semua foto ini bikin Fi bangga banget sama Ikara. Dari anak kecil yang penuh rasa penasaran, sampai jadi Ikara yang sekarang yang terus berjuang buat masa depannya. Pasti nggak semua prosesnya mudah, tapi hebatnya kamu nggak berhenti melangkah.<br><br>Jadi, terus semangat ya. Fi bakal selalu bangga sama setiap langkah kecil yang kamu ambil. Dan nanti, waktu semua mimpi kamu satu per satu terwujud, semoga kamu ingat kalau dari awal ada seseorang yang diam-diam ikut bangga ngelihat proses kamu. 🤍✨</p>
+                <div class="btn-group"> 
+                    <button onclick="nextPage(6)">♡</button>  
+                    <button onclick="prevPage(6)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+ 
+            <div class="page" id="p7">  
+                <div class="photo-group">
+                    <img src="https://birthdaysx.github.io/Foto6/itu3.png" class="photo-frame photo-small"> 
+                    <img src="https://birthdaysx.github.io/Foto6/itu4.png" class="photo-frame photo-small"> 
+                </div>
+                 
+                <div class="voice-note-container">
+                    <p style="font-size: 0.8rem; margin-bottom: 5px;">Dengerin pesan dari Fi yaa 🤍</p>
+                    <audio id="voiceNote" controls>
+                        <!-- Nanti ganti link.mp3 dengan link asli voice note-nya -->
+                        <source src="https://birthdaysx.github.io/Musik/lagu1.mp3" type="audio/mpeg"> 
+                    </audio>
+                </div>
+                
+                <div class="btn-group"> 
+                    <button onclick="nextPage(7)">Terakhir ✨</button>  
+                    <button onclick="prevPage(7)" class="back-btn">Kembali</button>
+                </div>
+            </div> 
+ 
+            <div class="page" id="p8">
+                <img src="https://media.tenor.com/AZ12YafzVwwAAAAi/bubu-dudu-prince-bubu-dudu-princess.gif" class="sticker-gif"> 
+                <h1 style="font-size: 1.1rem; margin-bottom: 10px;">HAPPY LEVEL UP<BR>IKARAA 🤍</h1> 
+                <div id="typewriter"></div>   
+                
+                <div class="btn-group" id="p8-buttons" style="display: none; animation: fadeIn 1s;"> 
+                    <!-- Silakan ganti nomer WA jika perlu -->
+                    <button id="waButton" onclick="balasWA()">Balas pesan ini 🥰</button>
+                    <button onclick="prevPage(8)" class="back-btn">Kembali</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Custom Popup Alert (Hidden by default) -->
+    <div id="customAlert" class="custom-popup-overlay">
+        <div class="custom-popup-box">
+            <!-- Stiker marah lucu dari tenor (Bubu marah) -->
+            <img src="https://media.tenor.com/2s3648E_3tEAAAAi/bubu-bubu-dudu.gif" alt="Angry Sticker" class="popup-sticker">
+            <h2 style="margin: 0; font-size: 1.2rem; color: var(--accent-brown);">Eitss!</h2>
+            <p style="font-size: 1rem; margin-top: 10px;">Dengerin duluu voicenya sampai selesai yaa! 😠🤍</p>
+            <button class="popup-btn" onclick="closeAlert()">Oke, dimaafin</button>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Hujan Emoticon
+        const emojis = ['🎂', '🤍', '✨', '⚽', '🤎'];
+        
+        function createEmoji() {
+            const e = document.createElement('div');
+            e.className = 'emoji-rain';
+            e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            e.style.left = Math.random() * 100 + 'vw';
+            e.style.animationDuration = Math.random() * 3 + 3 + 's';
+            e.style.fontSize = Math.random() * 15 + 10 + 'px';
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 6000);
+        }
+        setInterval(createEmoji, 400);
+
+        function generateCalendar() { 
+            const grid = document.getElementById('calendarGrid');  
+            grid.innerHTML = ""; 
+            
+            const year = 2026;
+            const month = 7; // Agustus 
+            
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyDiv = document.createElement('div');
+                grid.appendChild(emptyDiv);
+            }
+            
+            const targetDay = 13; 
+            for(let i = 1; i <= totalDays; i++) { 
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                dayDiv.innerText = i;
+                
+                if(i === targetDay) {
+                    const circle = document.createElement('div');
+                    circle.className = 'today-circle';
+                    dayDiv.appendChild(circle);
+                    dayDiv.style.fontWeight = 'bold';
+                    dayDiv.style.color = 'white'; 
+                }
+                grid.appendChild(dayDiv);
+            }
+        }
+        generateCalendar();
+
+        // Variabel untuk melacak apakah voice note sudah selesai
+        let isVoiceNoteFinished = false;
+
+        function closeAlert() {
+            const alertBox = document.getElementById('customAlert');
+            alertBox.classList.remove('show');
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 300); // Sesuaikan dengan durasi transisi CSS
+        }
+
+        function nextPage(current) {
+            if(current === 1) {
+                document.getElementById('bgMusic').play().catch(() => {
+                    console.log("Audio play di block browser, harus interaksi dulu.");
+                });
+            }
+
+            // Pengecekan untuk Halaman 7 (Voice Note)
+            if (current === 7) {
+                if (!isVoiceNoteFinished) {
+                    // Jika belum selesai, tampilkan popup dan batalkan pindah halaman
+                    const alertBox = document.getElementById('customAlert');
+                    alertBox.style.display = 'flex';
+                    // Trigger reflow untuk animasi
+                    setTimeout(() => alertBox.classList.add('show'), 10);
+                    return; 
+                } else {
+                    // Jika sudah selesai, mainkan confetti dan lanjut
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#8b5a2b', '#d2b48c', '#f5ebdf', '#ffffff'] 
+                    });
+                }
+            }
+
+            document.getElementById('p' + current).classList.remove('active');
+            const next = current + 1;
+            document.getElementById('p' + next).classList.add('active');
+
+            if(next === 8) {
+                startTypewriter();
+            }
+        } 
+
+        function prevPage(current) {
+            document.getElementById('p' + current).classList.remove('active');
+            const prev = current - 1;
+            document.getElementById('p' + prev).classList.add('active');
+        }
+ 
+        const text = `Semoga semua langkah yang sedang kamu perjuangkan selalu dipermudah, mimpimu satu per satu menemukan jalannya, dan semoga negri sakura segera menyambut kedatanganmu.
+
+Terima kasih sudah hadir dengan versi dirimu yang sekarang. Tetap jadi Ikara yang baik, kuat, dan jangan lupa jaga kesehatan ya.
+
+Semoga nanti, saat semua perjuangan ini selesai, kita sama-sama bisa tersenyum sambil bilang, "Ternyata semua effort ini memang sepadan."
+
+Oh iya... jangan lupa sering-sering senyum ya. Soalnya senyummu lumayan bikin seseorang candu. Happy birthday, Ultramen. 🦸🏻‍♂️🎂✨`; 
+
+        function startTypewriter() {
+            let i = 0;
+            const target = document.getElementById("typewriter");
+            target.innerHTML = ""; 
+            document.getElementById("p8-buttons").style.display = "none"; 
+            
+            function type() {
+                if (i < text.length) { 
+                    target.innerHTML += text.charAt(i);
+                    i++;
+                    target.scrollTop = target.scrollHeight; 
+                    setTimeout(type, 40); 
+                } else {
+                    target.scrollTop = target.scrollHeight; 
+                    const p8Btns = document.getElementById("p8-buttons");
+                    p8Btns.style.display = "flex";
+                }
+            } 
+            type();
+        }
+
+        function balasWA() {
+            const phoneNumber = "6287812569719"; 
+            const message = "";   
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+        }
+
+        const bgMusic = document.getElementById('bgMusic');
+        const voiceNote = document.getElementById('voiceNote');
+
+        if (voiceNote) {
+            voiceNote.onplay = function() {
+                if (!bgMusic.paused) {
+                    bgMusic.pause(); 
+                    window.bgMusicWasPlaying = true; 
+                }
+            };
+
+            voiceNote.onpause = function() {
+                if (window.bgMusicWasPlaying) {
+                    bgMusic.play().catch(() => {}); 
+                }
+            };
+
+            // Saat voice note selesai diputar sampai habis (Ended)
+            voiceNote.onended = function() {
+                // Tandai bahwa voice note sudah selesai
+                isVoiceNoteFinished = true;
+                
+                if (window.bgMusicWasPlaying) {
+                    bgMusic.play().catch(() => {}); 
+                }
+            }; 
+        }
+    </script>
+</body>
+</html>
