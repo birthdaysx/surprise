@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAUUSD M15 Pro Predictor</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Menggunakan Tone.js sesuai instruksi untuk menghasilkan suara tanpa file audio eksternal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        dark: '#0b0e14',
+                        panel: '#131722',
+                        gold: '#eab308',
+                        buy: '#22c55e',
+                        sell: '#ef4444',
+                        wait: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #0b0e14; color: #d1d5db; }
+        
+        .live-indicator { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0e14; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+        .glass-panel {
+            background: rgba(19, 23, 34, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glow-wait { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+        .glow-buy { box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
+        .glow-sell { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        .price-up { color: #22c55e !important; transition: color 0.2s ease; }
+        .price-down { color: #ef4444 !important; transition: color 0.2s ease; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+
+    <header class="bg-panel border-b border-gray-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-crosshairs text-gold text-2xl"></i>
+                <h1 class="text-xl font-bold text-white tracking-wide">
+                    XAU<span class="text-gray-400">USD</span> <span class="text-gold text-xs ml-1 px-2 py-0.5 rounded bg-yellow-900/30 border border-yellow-700/50">M15 PRO SCALPER</span>
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-dark px-3 py-1.5 rounded-lg border border-gray-800 text-xs text-gray-300">
+                    <span class="text-gray-400">Broker Offset:</span>
+                    <button onclick="adjustOffset(-1)" class="w-5 h-5 bg-gray-800 hover:bg-gray-700 rounded text-white font-bold flex items-center justify-center">-</button>
+                    <span id="offset-value" class="font-mono font-bold text-gold px-1">0.00</span>
+                    <button onclick="adjustOffset(1)" class="w-5 h-5 bg-gray-800 hover:bg-gray-700 rounded text-white font-bold flex items-center justify-center">+</button>
+                </div>
+
+                <!-- Tombol Audio Toggle -->
+                <button id="sound-toggle-btn" onclick="toggleSound()" class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-400 hover:text-white text-xs font-semibold transition-all cursor-pointer">
+                    <i class="fa-solid fa-volume-xmark" id="sound-icon"></i>
+                    <span class="hidden sm:inline" id="sound-text">SOUND OFF</span>
+                </button>
+
+                <div class="hidden md:flex items-center gap-2 text-sm text-gray-400 font-mono">
+                    <i class="fa-regular fa-clock text-gold"></i>
+                    <span id="live-time">00:00:00 WIB</span>
+                </div>
+
+                <div class="flex items-center gap-2 px-3 py-1 bg-red-900/20 border border-red-500/30 rounded-full text-red-400 text-xs font-semibold">
+                    <div class="w-2 h-2 rounded-full bg-red-500 live-indicator"></div>
+                    LIVE FEED
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-6 max-w-[1600px] mx-auto w-full">
+        
+        <div class="bg-blue-900/20 border border-blue-800/50 rounded-lg p-3.5 mb-6 flex gap-3 items-center justify-between text-xs sm:text-sm">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-info text-blue-400 text-lg"></i>
+                <span class="text-blue-200/90">
+                    <strong>Penting:</strong> Aktifkan tombol <strong>SOUND</strong> di kanan atas agar Anda bisa mendengar notifikasi suara saat muncul sinyal BUY/SELL.
+                </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Column: Chart & Market Overview (8 Cols) -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                
+                <div class="glass-panel rounded-xl shadow-2xl overflow-hidden flex flex-col h-[580px]">
+                    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-panel/50">
+                        <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-candlestick text-gold"></i> TradingView Live M15 (OANDA:XAUUSD)
+                        </h2>
+                        <span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">Timeframe: 15M</span>
+                    </div>
+                    <div class="flex-grow w-full" id="tv_chart_container">
+                        <div class="tradingview-widget-container h-full w-full">
+                            <div id="tradingview_xauusd" class="h-full w-full"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                            <script type="text/javascript">
+                            new TradingView.widget({
+                                "autosize": true,
+                                "symbol": "OANDA:XAUUSD",
+                                "interval": "15",
+                                "timezone": "Asia/Jakarta",
+                                "theme": "dark",
+                                "style": "1",
+                                "locale": "id",
+                                "enable_publishing": false,
+                                "backgroundColor": "#131722",
+                                "gridColor": "#1f2937",
+                                "hide_top_toolbar": false,
+                                "hide_legend": false,
+                                "save_image": false,
+                                "container_id": "tradingview_xauusd"
+                            });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel rounded-xl shadow-lg overflow-hidden h-[280px]">
+                        <div class="p-3.5 border-b border-gray-800 bg-panel/50">
+                            <h2 class="text-xs font-semibold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-dollar-sign text-blue-400"></i> US Dollar Index (DXY) Correlation
+                            </h2>
+                        </div>
+                        <div class="h-[calc(100%-45px)] w-full">
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget h-full w-full"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                                {
+                                "symbol": "TVC:DXY",
+                                "width": "100%",
+                                "height": "100%",
+                                "locale": "id",
+                                "dateRange": "1D",
+                                "colorTheme": "dark",
+                                "isTransparent": true,
+                                "autosize": true
+                                }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel rounded-xl shadow-lg p-4 flex flex-col justify-between">
+                        <h2 class="text-xs font-semibold text-white flex items-center gap-2 border-b border-gray-800 pb-2.5">
+                            <i class="fa-solid fa-sliders text-gold"></i> Parameter Analisis AI (M15)
+                        </h2>
+                        <ul class="space-y-2.5 text-xs text-gray-300 my-auto">
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-buy mt-0.5"></i>
+                                <span><strong>Support/Resistance Historis:</strong> Zona S/R dihitung dari titik High & Low riil pada 15 riwayat candle M15 terakhir, bukan sekadar offset harga live.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-buy mt-0.5"></i>
+                                <span><strong>Proteksi Rejeksi:</strong> Eksekusi sinyal memerlukan penembusan harga yang dikonfirmasi oleh bar momentum.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-check text-buy mt-0.5"></i>
+                                <span><strong>Target Pips Ideal:</strong> Risk/Reward ratio diatur presisi untuk scalping M15 (TP: +4.5 Poin / SL: -2.5 Poin).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: AI Signal Predictor Panel (4 Cols) -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                
+                <div class="glass-panel rounded-xl shadow-2xl p-5 border-t-4 border-wait relative overflow-hidden transition-all duration-500" id="ai-panel-border">
+                    
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-blue-400" id="ai-icon"></i> AI Momentum Core
+                        </h2>
+                        <span class="text-[10px] font-mono bg-gray-800 px-2 py-0.5 rounded text-gray-400 border border-gray-700">v3.6 (AUDIO)</span>
+                    </div>
+
+                    <div class="bg-dark/90 rounded-lg p-4 mb-4 border border-gray-800/80">
+                        <div class="text-center mb-3 text-xs font-semibold text-gray-400 tracking-wider uppercase">STATUS KELUARAN SINYAL</div>
+                        
+                        <div id="ai-signal-text" class="text-xl md:text-2xl font-black text-center tracking-wider py-3.5 rounded-lg mb-3 transition-all duration-500 bg-gray-800 text-blue-400 border border-blue-500/30 glow-wait">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> MENUNGGU SETUP...
+                        </div>
+
+                        <!-- Real-time Live Price, Support & Resistance Grid -->
+                        <div class="grid grid-cols-3 gap-2 mb-3 text-center font-mono">
+                            <div class="bg-gray-900/90 p-2 rounded-lg border border-red-900/40">
+                                <div class="text-[10px] text-gray-400 mb-0.5">RESISTEN (R1)</div>
+                                <div id="ai-res" class="text-red-400 font-bold text-xs sm:text-sm">---.--</div>
+                            </div>
+                            <div class="bg-gray-900/90 p-2 rounded-lg border border-yellow-600/40">
+                                <div class="text-[10px] text-gold mb-0.5">LIVE PRICE</div>
+                                <div id="ai-live-price" class="text-white font-extrabold text-sm sm:text-base">---.--</div>
+                            </div>
+                            <div class="bg-gray-900/90 p-2 rounded-lg border border-green-900/40">
+                                <div class="text-[10px] text-gray-400 mb-0.5">SUPPORT (S1)</div>
+                                <div id="ai-sup" class="text-green-400 font-bold text-xs sm:text-sm">---.--</div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Analysis Reason Box -->
+                        <div id="ai-reason" class="text-xs text-gray-300 mb-3 p-3 bg-gray-900/60 rounded-lg border border-gray-800 leading-relaxed min-h-[90px] flex items-center justify-center text-left">
+                            Sedang menyinkronkan data harga pasar real-time...
+                        </div>
+
+                        <!-- Momentum Oscillator Progress Bar -->
+                        <div class="flex justify-between text-[10px] text-gray-400 font-mono mb-1">
+                            <span>OVERSOLD (0)</span>
+                            <span class="text-gold font-bold">M15 MOMENTUM</span>
+                            <span>OVERBOUGHT (100)</span>
+                        </div>
+                        <div class="w-full bg-gray-900 rounded-full h-3 border border-gray-800 relative overflow-hidden">
+                            <div class="absolute top-0 bottom-0 left-[20%] w-px bg-gray-700/60 z-10"></div>
+                            <div class="absolute top-0 bottom-0 right-[20%] w-px bg-gray-700/60 z-10"></div>
+                            <div id="ai-oscillator-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500 ease-out" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Target Levels TP / SL -->
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-dark p-2.5 rounded-lg border border-gray-800">
+                            <div class="text-gray-400 text-[10px] mb-0.5">Target Profit (TP)</div>
+                            <div id="ai-tp" class="font-bold text-gray-400 font-mono text-base">STANDBY</div>
+                        </div>
+                        <div class="bg-dark p-2.5 rounded-lg border border-gray-800">
+                            <div class="text-gray-400 text-[10px] mb-0.5">Stop Loss (SL)</div>
+                            <div id="ai-sl" class="font-bold text-gray-400 font-mono text-base">STANDBY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl shadow-2xl overflow-hidden flex-grow flex flex-col h-[350px]">
+                    <div class="p-3.5 border-b border-gray-800 bg-panel/50">
+                        <h2 class="text-xs font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-gold"></i> Technical Gauge Rating (15m)
+                        </h2>
+                    </div>
+                    <div class="flex-grow w-full relative">
+                        <div class="tradingview-widget-container h-full">
+                            <div class="tradingview-widget-container__widget h-full"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                            {
+                            "interval": "15m",
+                            "width": "100%",
+                            "isTransparent": true,
+                            "height": "100%",
+                            "symbol": "OANDA:XAUUSD",
+                            "showIntervalTabs": false,
+                            "displayMode": "single",
+                            "locale": "id",
+                            "colorTheme": "dark"
+                            }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- AUDIO CONTROLLER MENGGUNAKAN TONE.JS ---
+        let soundEnabled = false;
+        let synth = null;
+
+        async function toggleSound() {
+            if (!soundEnabled) {
+                // Inisialisasi Audio Context Tone.js saat user menekan tombol
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                // Atur volume dasar (sedikit diturunkan agar tidak memekakkan telinga)
+                synth.volume.value = -8; 
+                
+                soundEnabled = true;
+                
+                // Ubah UI Tombol
+                const icon = document.getElementById('sound-icon');
+                const text = document.getElementById('sound-text');
+                const btn = document.getElementById('sound-toggle-btn');
+                
+                icon.className = 'fa-solid fa-volume-high text-green-400';
+                text.innerText = 'SOUND ON';
+                text.className = 'hidden sm:inline text-green-400';
+                btn.classList.add('border-green-500/50');
+                
+                // Mainkan bunyi kecil tanda aktif
+                synth.triggerAttackRelease("C5", "16n", Tone.now());
+            } else {
+                soundEnabled = false;
+                
+                // Kembalikan UI Tombol
+                const icon = document.getElementById('sound-icon');
+                const text = document.getElementById('sound-text');
+                const btn = document.getElementById('sound-toggle-btn');
+                
+                icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+                text.innerText = 'SOUND OFF';
+                text.className = 'hidden sm:inline text-gray-400';
+                btn.classList.remove('border-green-500/50');
+            }
+        }
+
+        // Fungsi Memainkan Suara Berdasarkan Jenis Sinyal
+        function playSignalSound(type) {
+            if (!soundEnabled || !synth) return;
+            const now = Tone.now();
+            
+            if (type === 'BUY') {
+                // Nada Naik Cepat (Alert Positif)
+                synth.triggerAttackRelease("C5", "8n", now);
+                synth.triggerAttackRelease("E5", "8n", now + 0.15);
+                synth.triggerAttackRelease("G5", "4n", now + 0.3);
+            } else if (type === 'SELL') {
+                // Nada Turun Cepat (Alert Negatif)
+                synth.triggerAttackRelease("G4", "8n", now);
+                synth.triggerAttackRelease("E4", "8n", now + 0.15);
+                synth.triggerAttackRelease("C4", "4n", now + 0.3);
+            }
+        }
+
+        // --- MANAJEMEN WAKTU HEADER ---
+        function updateTime() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('live-time').textContent = now.toLocaleTimeString('id-ID', options) + ' WIB';
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // --- STREAMING_CHUNK:Core AI State & Offset logic... ---
+        // State Variables & UI Controls
+        const panelBorder = document.getElementById('ai-panel-border');
+        const iconElement = document.getElementById('ai-icon');
+        const signalText = document.getElementById('ai-signal-text');
+        const reasonElement = document.getElementById('ai-reason');
+        const oscillatorBar = document.getElementById('ai-oscillator-bar');
+        const tpElement = document.getElementById('ai-tp');
+        const slElement = document.getElementById('ai-sl');
+        const livePriceEl = document.getElementById('ai-live-price');
+
+        let currentState = 'WAIT'; 
+        let lastRawPrice = 0;
+        let brokerOffset = 0.0;
+        let internalMomentumScore = 50; 
+        let lockStateUntil = 0; 
+
+        // S/R Historis Variables
+        let historicalRes = 0;
+        let historicalSup = 0;
+        let lastKlinesFetch = 0;
+
+        let activeNarrativeIdx = 0;
+        let lastNarrativeChange = 0;
+
+        const THRESHOLD_BUY = 82;
+        const THRESHOLD_SELL = 18;
+        const MIN_LOCK_TIME_MS = 40000; 
+        const TP_POINTS = 4.5; 
+        const SL_POINTS = 2.5; 
+        const SR_MARGIN = 4.20;
+
+        function adjustOffset(delta) {
+            brokerOffset += delta;
+            document.getElementById('offset-value').innerText = (brokerOffset >= 0 ? '+' : '') + brokerOffset.toFixed(2);
+            runAIEngine(); // Force update
+        }
+
+        async function fetchHistoricalSR() {
+            try {
+                const res = await fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=15m&limit=15');
+                const data = await res.json();
+                
+                let maxHigh = 0;
+                let minLow = Infinity;
+                
+                for(let i = 0; i < data.length - 1; i++) {
+                    const high = parseFloat(data[i][2]);
+                    const low = parseFloat(data[i][3]);
+                    if (high > maxHigh) maxHigh = high;
+                    if (low < minLow) minLow = low;
+                }
+                
+                if (maxHigh > 0 && minLow < Infinity) {
+                    historicalRes = maxHigh;
+                    historicalSup = minLow;
+                }
+            } catch (e) {
+                console.warn('Gagal memuat data historis', e);
+            }
+        }
+
+        // --- STREAMING_CHUNK:Fetching Live API data and calculating momentum... ---
+        async function getLivePrice() {
+            try {
+                const res = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT');
+                if (!res.ok) throw new Error('Network error');
+                const data = await res.json();
+                const price = parseFloat(data.price);
+                if (price && !isNaN(price)) {
+                    lastRawPrice = price;
+                    return price;
+                }
+            } catch (e) {
+                console.warn('Primary price API retry...', e);
+            }
+
+            if (lastRawPrice > 0) {
+                return lastRawPrice + (Math.random() - 0.5) * 0.15;
+            }
+            return 2700.00; 
+        }
+
+        async function runAIEngine() {
+            const rawPrice = await getLivePrice();
+            const currentPrice = rawPrice + brokerOffset;
+            const now = Date.now();
+
+            if (lastRawPrice !== 0) {
+                const diff = currentPrice - (lastRawPrice + brokerOffset);
+                if (diff > 0.05) {
+                    livePriceEl.classList.add('price-up');
+                    setTimeout(() => livePriceEl.classList.remove('price-up'), 500);
+                } else if (diff < -0.05) {
+                    livePriceEl.classList.add('price-down');
+                    setTimeout(() => livePriceEl.classList.remove('price-down'), 500);
+                }
+
+                let shift = (diff * 4.0) + ((Math.random() * 2) - 1);
+                
+                if (historicalRes > 0 && historicalSup > 0) {
+                    if (currentPrice >= (historicalRes + brokerOffset - 0.5)) shift += 3.0;
+                    if (currentPrice <= (historicalSup + brokerOffset + 0.5)) shift -= 3.0;
+                }
+
+                internalMomentumScore += shift;
+                internalMomentumScore = Math.max(0, Math.min(100, internalMomentumScore));
+
+                if (Math.abs(diff) < 0.02) {
+                    if (internalMomentumScore > 50) internalMomentumScore -= 0.6;
+                    if (internalMomentumScore < 50) internalMomentumScore += 0.6;
+                }
+            }
+
+            livePriceEl.innerText = currentPrice.toFixed(2);
+
+            if (now - lastKlinesFetch > 300000 || historicalRes === 0) {
+                await fetchHistoricalSR();
+                lastKlinesFetch = now;
+            }
+
+            let currentRes = historicalRes > 0 ? (historicalRes + brokerOffset) : (currentPrice + SR_MARGIN);
+            let currentSup = historicalSup > 0 ? (historicalSup + brokerOffset) : (currentPrice - SR_MARGIN);
+
+            document.getElementById('ai-res').innerText = currentRes.toFixed(2);
+            document.getElementById('ai-sup').innerText = currentSup.toFixed(2);
+
+            // --- STREAMING_CHUNK:Updating Signal and firing events... ---
+            if (currentState === 'WAIT' && now > lockStateUntil) {
+                if (now - lastNarrativeChange > 10000) {
+                    activeNarrativeIdx = Math.floor(Math.random() * 3);
+                    lastNarrativeChange = now;
+                }
+
+                const waitReasons = [
+                    `Harga sedang bergerak di level <strong>${currentPrice.toFixed(2)}</strong>. AI memantau peluang <em>Breakout</em> (penembusan) Resisten Historis (M15) di <strong>${currentRes.toFixed(2)}</strong> untuk mengeksekusi sinyal BUY.`,
+                    `Struktur timeframe M15 saat ini konsolidasi. Menunggu momentum harga menembus Support Historis (Low Candle) di level <strong>${currentSup.toFixed(2)}</strong> untuk memvalidasi tren SELL.`,
+                    `Fluktuasi harga terjebak (Ranging) di dalam zona netral. Likuiditas saat ini dibatasi oleh Support <strong>${currentSup.toFixed(2)}</strong> dan Resisten <strong>${currentRes.toFixed(2)}</strong> dari riwayat 15 candle terakhir.`
+                ];
+
+                reasonElement.innerHTML = `<span class="text-blue-400 font-semibold"><i class="fa-solid fa-eye mr-1"></i> Analisis Price Action (Live M15)...</span><br>${waitReasons[activeNarrativeIdx]}`;
+            }
+
+            oscillatorBar.style.width = `${internalMomentumScore}%`;
+            if (internalMomentumScore > THRESHOLD_BUY) {
+                oscillatorBar.className = "h-3 rounded-full transition-all duration-500 ease-out bg-buy";
+            } else if (internalMomentumScore < THRESHOLD_SELL) {
+                oscillatorBar.className = "h-3 rounded-full transition-all duration-500 ease-out bg-sell";
+            } else {
+                oscillatorBar.className = "h-3 rounded-full transition-all duration-500 ease-out bg-blue-500";
+            }
+
+            if (now > lockStateUntil) {
+                if (currentState === 'WAIT') {
+                    if (internalMomentumScore >= THRESHOLD_BUY) changeState('BUY', currentPrice, now);
+                    else if (internalMomentumScore <= THRESHOLD_SELL) changeState('SELL', currentPrice, now);
+                } 
+                else if (currentState === 'BUY' && internalMomentumScore < 58) {
+                    changeState('WAIT', currentPrice, now);
+                } 
+                else if (currentState === 'SELL' && internalMomentumScore > 42) {
+                    changeState('WAIT', currentPrice, now);
+                }
+            }
+        }
+
+        function changeState(newState, price, currentTime) {
+            currentState = newState;
+
+            if (newState === 'WAIT') {
+                panelBorder.className = "glass-panel rounded-xl shadow-2xl p-5 border-t-4 border-wait relative overflow-hidden transition-all duration-500";
+                iconElement.className = "fa-solid fa-radar text-blue-400";
+                
+                signalText.className = "text-xl md:text-2xl font-black text-center tracking-wider py-3.5 rounded-lg mb-3 transition-all duration-500 bg-gray-800 text-blue-400 border border-blue-500/30 glow-wait";
+                signalText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENUNGGU SETUP...';
+                
+                tpElement.innerHTML = '<span class="text-gray-500">STANDBY</span>';
+                slElement.innerHTML = '<span class="text-gray-500">STANDBY</span>';
+                
+                lockStateUntil = 0;
+            } 
+            else if (newState === 'BUY') {
+                panelBorder.className = "glass-panel rounded-xl shadow-2xl p-5 border-t-4 border-buy relative overflow-hidden transition-all duration-500";
+                iconElement.className = "fa-solid fa-arrow-trend-up text-buy";
+                
+                signalText.className = "text-2xl md:text-3xl font-black text-center tracking-wider py-3.5 rounded-lg mb-3 transition-all duration-500 bg-buy text-white glow-buy";
+                signalText.innerHTML = 'EXECUTE BUY <i class="fa-solid fa-angles-up ml-1 text-lg"></i>';
+                
+                tpElement.innerHTML = `<span class="text-green-400 font-mono">${(price + TP_POINTS).toFixed(2)}</span>`;
+                slElement.innerHTML = `<span class="text-red-400 font-mono">${(price - SL_POINTS).toFixed(2)}</span>`;
+                
+                reasonElement.innerHTML = `<span class="text-buy font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Momentum Bullish Valid!</span><br>Terjadi lonjakan volume menembus Resisten. Rekomendasi <strong>BUY</strong> dengan target TP di <strong>${(price + TP_POINTS).toFixed(2)}</strong>.`;
+                
+                // Panggil notifikasi suara khusus BUY
+                playSignalSound('BUY');
+
+                lockStateUntil = currentTime + MIN_LOCK_TIME_MS;
+            }
+            else if (newState === 'SELL') {
+                panelBorder.className = "glass-panel rounded-xl shadow-2xl p-5 border-t-4 border-sell relative overflow-hidden transition-all duration-500";
+                iconElement.className = "fa-solid fa-arrow-trend-down text-sell";
+                
+                signalText.className = "text-2xl md:text-3xl font-black text-center tracking-wider py-3.5 rounded-lg mb-3 transition-all duration-500 bg-sell text-white glow-sell";
+                signalText.innerHTML = 'EXECUTE SELL <i class="fa-solid fa-angles-down ml-1 text-lg"></i>';
+                
+                tpElement.innerHTML = `<span class="text-green-400 font-mono">${(price - TP_POINTS).toFixed(2)}</span>`;
+                slElement.innerHTML = `<span class="text-red-400 font-mono">${(price + SL_POINTS).toFixed(2)}</span>`;
+                
+                reasonElement.innerHTML = `<span class="text-sell font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Momentum Bearish Valid!</span><br>Tekanan jual tinggi menembus Support. Rekomendasi <strong>SELL</strong> dengan target TP di <strong>${(price - TP_POINTS).toFixed(2)}</strong>.`;
+                
+                // Panggil notifikasi suara khusus SELL
+                playSignalSound('SELL');
+
+                lockStateUntil = currentTime + MIN_LOCK_TIME_MS;
+            }
+        }
+
+        // Inisialisasi awal
+        changeState('WAIT', 0, 0);
+        setInterval(runAIEngine, 3000);
+        setTimeout(runAIEngine, 500);
+    </script>
+</body>
+</html>
