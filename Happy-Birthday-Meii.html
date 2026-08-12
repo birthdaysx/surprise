@@ -1413,7 +1413,7 @@
                 document.getElementById('seal-loading').classList.add('hidden');
                 document.getElementById('final-sent').classList.remove('hidden');
                  
-                const d = new Date(`2026 August 24`); 
+                const d = new Date(2026, 7, 24);  
                 const opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 document.getElementById('date-display').innerText = d.toLocaleDateString('en-US', opt);
             }, 3000);
