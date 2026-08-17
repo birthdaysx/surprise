@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday My Love🤍</title>
+    <title>HBDLilPrinces</title>
     <!-- Menambahkan link font Quicksand agar terbaca di canvas -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -184,6 +184,7 @@
             .photo-4.reveal { top: 35%; right: 5%; }
             .photo-5.reveal { top: 65%; left: 35%; transform: rotate(5deg); }
         }
+        
         /* --------------------------- */
 
         .message-card {
@@ -264,29 +265,29 @@
     <!-- HALAMAN 2 (FIREWORKS) -->
     <div id="page-2" class="page hidden">
         <div style="position: fixed; top: 20px; color: rgba(255,255,255,0.7); letter-spacing: 2px; font-size: 14px; animation: pulse 1s infinite alternate; pointer-events: none;">
-            ✨ Klik layar untuk Wishes ✨
+            ✨ Tap-tap layar untuk Wishes ✨
         </div>
         <button id="next-page-btn">Lihat Kejutan Spesial ✨</button>
     </div>
 
-    <!-- HALAMAN 3 (GALERI FOTO & VIDEO) -->
+    <!-- HALAMAN 3 (GALERI FOTO & VIDEO) --> 
     <div id="page-3" class="page hidden">
         
         <div class="photo-gallery"> 
-            <div class="photo-item photo-1"><img src="https://birthdaysx.github.io/Foto/pp1.jpeg" alt="Momen 1"></div>
-            <div class="photo-item photo-2"><img src="https://birthdaysx.github.io/Foto/pp2.jpeg" alt="Momen 2"></div>
-            <div class="photo-item photo-3"><img src="https://birthdaysx.github.io/Foto/pp3.jpeg" alt="Momen 3"></div>
-            <div class="photo-item photo-4"><img src="https://birthdaysx.github.io/Foto/pp4.jpeg" alt="Momen 4"></div>
-            <div class="photo-item photo-5"><img src="https://birthdaysx.github.io/Foto/pp5.jpeg" alt="Momen 5"></div>
+            <div class="photo-item photo-1"><img src="https://birthdaysx.github.io/Foto6/agu1.jpeg" alt="Momen 1"></div>
+            <div class="photo-item photo-2"><img src="https://birthdaysx.github.io/Foto6/agu2.jpeg" alt="Momen 2"></div>
+            <div class="photo-item photo-3"><img src="https://birthdaysx.github.io/Foto6/agu3.jpeg" alt="Momen 3"></div>
+            <div class="photo-item photo-4"><img src="https://birthdaysx.github.io/Foto6/agu4.jpeg" alt="Momen 4"></div>
+            <div class="photo-item photo-5"><img src="https://birthdaysx.github.io/Foto6/agu5.jpeg" alt="Momen 5"></div>
         </div>
 
         <div id="scroll-hint" class="scroll-hint">Scroll kebawah ya sayangg.. 👇</div>  
  
         <!-- KARTU PESAN -->
-        <div class="message-card" id="message-card">
+        <div class="message-card" id="message-card"> 
             <h2>Happy Birthday<br>Sayang🤍</h2>
             <p id="typing-text"></p>
-            <p style="font-style: italic; margin-top: 15px;">From Your Boyfriend</p>
+            <p style="font-style: italic; margin-top: 15px; font-weight: bold;">Your BoyFriend</p>
             <button class="restart-btn" onclick="location.reload()">Mulai Lagi</button>
         </div>
     </div>
@@ -310,10 +311,18 @@
         let cinematicDone = false; 
  
         // PESAN UNTUK DIKETIK
-        const messageToType = "Tepat hari ini 14 Februari 2026, it’s your special day sayang💐\n"+"wish u all the best bubbiee🤍 maacii sayang udaa lahir kedunia ini dan jadi pasanganku. selamat bertumbuh jadi versi yang lebih baik setiap harinya, sayangku, cintaku. pajang umur dan sehat selalu ya sayangg, biar kita bisa bareng terus🥹💗 harapan akuu dihari ulang tahun sayangg, apapun yang sayang minta, cari, dan harapkan, semoga satu persatu terwujud, hari ini dan seterusnya 🤍 semoga tuhan mengabulkan hal-hal baik yang benar-benar diinginkan hati sayangg. happy birthday sayangg💐 aku akan selalu ada buat sayang, disetiap proses, disetiap hari, aku selalu sama sayangg 💗💗";
+        const messageToType = "Hallo sayanggkuuu, selamat ulang tahun yah cantikkkk🥳😀, di tanggal 16 Agustus ini merupakan tanggal dimana seorang anak perempuan cantik yang sangat baik, sangatt mencintai pacarnya, dan sangat perhatian lahir💝💖. Semoga di umur sayanggkuu yang ke 19 ini, sayanggkuu bisa menjadi pribadi yang lebih baik, bisa jadi orang yang membanggakan orang tuanya, bisa jadi orang yang selalu berbuat baik selalu💌💖. Aku mau ucapin terima kasih banyak udah lahir ke dunia ini, mewarnai hidup aku, menemani aku dari awal SMA hingga saat ini, mengajarkan aku banyak hal, dan selalu sabar sama aku yang kadang sedikit ngeselin😅. Happy Birthday Lil Princess, I Love Youu Soo Muchh🥳💖";
 
         // DAFTAR UCAPAN (WISHES) 
-        const wishes = [["HAPPY BIRTHDAY","SAYANGKU🤍"],["I LOVE YOU","SO MUCH"],["SEHAT","SELALU"],["PANJANG","UMUR"],["WISH YOU","ALL THE BEST"], ["MAKIN","SUKSES"],["LOVE YOU","ALWAYS"],["BAHAGIA","TERUS"]]; 
+        const wishes = [
+            ["Sehat", "Selalu"],
+            ["Panjang", "Umur"],
+            ["Sukses", "Selalu"],
+            ["Cantik", "Selalu"],
+            ["I Love", "Youu"],
+            ["Celia", "Terus"],
+            ["Lancar", "Kuliahnya Ya"]
+        ]; 
         let wishIndex = 0;
 
         function resize() {
@@ -409,7 +418,8 @@
                     for (let i = 0; i < 280; i++) {
                         particles.push(new SharpParticle(this.x, this.y, `#9f3a33`, true));
                     }
-                    setTimeout(() => createTextParticles(["BABY","GIRL"], this.x, this.y, "#ffffff"), 1);
+                    // Mengubah text "BABY GIRL" menjadi "Lil Princess" saat ledakan pertama
+                    setTimeout(() => createTextParticles(["Lil","Princess"], this.x, this.y, "#ffffff"), 1);
                     cinematicDone = true;
                     setTimeout(() => { nextPageBtn.style.display = 'block'; }, 5000);   
                 } else {
